@@ -1,19 +1,21 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { PORT } = require("./config")
+const morgan = require('morgan');
 
 const ExpressError = require("./helpers/expressError");
+const userRoutes = require("./routes/users");
 
 app.use(express.json()); // Parse request bodies for JSON
 app.use(cors());
+app.use(morgan("tiny"));
 
-// const uRoutes = require("./routes/users");
-
-// app.use("/users", uRoutes);
+/* routes */
+app.use("/users", userRoutes);
 
 /** 404 error handler **/
 app.use(function (req,res, next) {
+    console.log(":((((")
     const err = new ExpressError("Not Found", 404);
     return next(err)
 });
@@ -30,7 +32,4 @@ app.use(function (err, req, res, next){
     });
 });
 
-app.listen(PORT, function () {
-    console.log(`Server starting on port ${PORT}!`);
-  });
-  
+module.exports = app;
