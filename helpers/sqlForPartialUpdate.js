@@ -11,7 +11,7 @@
  *
  */
 
-function sqlForPartialUpdate(table, items, key, id) {
+function sqlForPartialUpdate(table, itemsObj, key, id) {
     // keep track of item indexes
     // store all the columns we want to update and associate with vals
   
@@ -19,13 +19,13 @@ function sqlForPartialUpdate(table, items, key, id) {
     let columns = [];
   
     // filter out keys that start with "_" -- we don't want these in DB
-    for (let key in items) {
+    for (let key in itemsObj) {
       if (key.startsWith("_")) {
         delete items[key]
       }
     }
   
-    for (let column in items) {
+    for (let column in itemsObj) {
       columns.push(`${column}=$${idx}`);
       idx += 1;
     }
