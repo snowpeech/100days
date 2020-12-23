@@ -1,14 +1,14 @@
 const express = require('express');
 const router = new express.Router();
 const db = require("../db");
-const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
+
 const expressError = require('../helpers/expressError')
 // const sqlForPost = require('../helpers/sqlForPost')
 
 const User = require('../models/user') 
 
 /* Register new user*/
-router.post('/new', async (req,res,next) => {
+router.post('/', async (req,res,next) => {
     try {
     const {email, password, first_name, last_name, location, gender, phone_num} = req.body 
     //if not provided ,is undefined
@@ -47,26 +47,11 @@ router.get('/:id', async (req,res, next)=> {
 
 
 /* update a user - will need validation */
-router.patch('/:id/update', async (req, res, next) =>{
+router.patch('/:id', async (req, res, next) =>{
     try {
-        const id = req.params.id;
-        //should check if params id exists... 
-        let { query, values } = sqlForPartialUpdate(
-            "users",
-            req.body,
-            "id",
-            req.params.id
-          );
-          const results = await db.query(
-            `${query}`,
-            values
-          );
-          if (!result.rows[0]) {
-            throw new ExpressError(`User ID ${req.params.id} not found`, 404);
-          }
-
-          //need to either fix this or function to not return password
-          return res.json(results.rows[0]);
+        const response = await User.update(req.params.id,req.body)
+            
+        return res.json({user: response});
 
     } catch(e){
         return next(e)
@@ -75,29 +60,16 @@ router.patch('/:id/update', async (req, res, next) =>{
 
 
 /* delete a user - will need validation */
-router.delete('/:id/delete', async (req, res, next) =>{
+router.delete('/:id', async (req, res, next) =>{
     try {
-        const id = req.params.id;
-        //should check if params id exists... 
-        // let { query, values } = sqlForPartialUpdate(
-        //     "users",
-        //     req.body,
-        //     "id",
-        //     req.params.id
-        //   );
-        //   const result = await db.query(
-        //     `${query}`,
-        //     values
-        //   );
+        const response = await User.delete(req.params.id);
 
-        //   //need to either fix this or function to not return password
-        //   
-        const results = await db.query(`DELETE FROM users WHERE id = $1 RETURNING id, email`,
-        [id])
-        if (!results.rows[0]) {
-            throw new ExpressError(`User ID ${req.params.id} not found`, 404);
-          }
-        return res.json(results.rows[0]);
+        console.log('user route', response)
+        // console.log(res.status(204).json({"message":`User ${req.params.id} deleted`}))
+        // console.log('user route', res.status(204).json({message:response}))
+        // return res.status(204).json({ message: "User deleted" });
+        return res.status(204).json({user: response});
+
     } catch(e){
         return next(e)
     }
