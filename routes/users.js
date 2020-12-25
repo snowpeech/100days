@@ -1,29 +1,44 @@
 const express = require('express');
+const ExpressError = require('../helpers/expressError');
 const router = new express.Router();
-const db = require("../db");
-
-const expressError = require('../helpers/expressError')
-// const sqlForPost = require('../helpers/sqlForPost')
-
+const { ensureLoggedIn, ensureCorrectUser} = require('../middleware/auth')
 const User = require('../models/user') 
 
 /* Register new user*/
 router.post('/', async (req,res,next) => {
     try {
-    const {email, password, first_name, last_name, location, gender, phone_num} = req.body 
-    //if not provided ,is undefined
-    const userObj = {email, password, first_name, last_name, location, gender, phone_num};
-    
-    let newUser = await User.register(userObj);
-    
-    return res.status(201).json({user:newUser});
+        const {email, password, first_name, last_name, location, gender, phone_num} = req.body 
+        //if not provided ,is undefined
+        const userObj = {email, password, first_name, last_name, location, gender, phone_num};
+        
+        let token = await User.register(userObj);
+        
+        // return res.status(201).json({user:newUser});
+        return res.status(201).json({message:"User created", _token:token})
+
     } catch(e) {
         return next(e)
     }
 })
 
-/* gets all users from database */
-router.get('/', async (req,res,next) => {
+/* login with email & password. returns with token */
+router.post('/login', async (req,res,next) => {
+    try{
+        const {email, password} = req.body;
+        if(!email || !password){
+            throw new ExpressError("Username and password required", 404)
+        }
+        let token = await User.login(email, password);
+        
+        return res.json({message:"Logged in", _token:token})
+
+    } catch(e) {
+        return next(e)
+    }
+})
+
+/* gets all users from database . May eventually remove this method or just make it unavailable*/
+router.get('/', ensureLoggedIn, async (req,res,next) => {
     try{
         const allUsers = await User.getAll()
         
@@ -34,7 +49,7 @@ router.get('/', async (req,res,next) => {
 })
 
 /* get a single user by ID */
-router.get('/:id', async (req,res, next)=> {
+router.get('/:id', ensureCorrectUser, async (req,res, next)=> {
     try {
         const userInfo = await User.getOne(req.params.id);
         
@@ -47,7 +62,7 @@ router.get('/:id', async (req,res, next)=> {
 
 
 /* update a user - will need validation */
-router.patch('/:id', async (req, res, next) =>{
+router.patch('/:id',ensureCorrectUser, async (req, res, next) =>{
     try {
         const response = await User.update(req.params.id,req.body)
             
@@ -60,7 +75,7 @@ router.patch('/:id', async (req, res, next) =>{
 
 
 /* delete a user - will need validation */
-router.delete('/:id', async (req, res, next) =>{
+router.delete('/:id', ensureCorrectUser, async (req, res, next) =>{
     try {
         const response = await User.delete(req.params.id);
 

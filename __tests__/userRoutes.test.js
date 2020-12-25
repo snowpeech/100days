@@ -6,11 +6,14 @@ const jwt = require("jsonwebtoken");
 
 const app = require("../app");
 const db = require("../db");
-const { SECRET_KEY } = require("../config");
+const { SECRET } = require("../config");
 const BCRYPT_WORK_FACTOR = 1;
 
 let testUserToken;
 let userId;
+
+const loggedInErrMsg = "You must be logged in to view this";
+const incorrectUserMsg = "Unauthorized user";
 
 beforeEach(async () => {
     const hashedPassword = await bcrypt.hash("secret123", BCRYPT_WORK_FACTOR);
@@ -21,13 +24,13 @@ beforeEach(async () => {
           VALUES
           ('user@g.com', '${hashedPassword}', 'Kona', 'K'),
           ('user2@g.com', '${hashedPassword}', 'Hope', 'Lee')
-          RETURNING id`
+          RETURNING id, email`
     );
     userId = results.rows[0].id;
     // const testUser = { username: "user[0]", is_admin: false };
-  
-    // testUserToken = jwt.sign(testUser, SECRET_KEY);
+    testUserToken = jwt.sign(results.rows[0], SECRET);
 });
+
 
 afterEach(async () => {
     await db.query(` DELETE FROM users`);
@@ -40,16 +43,29 @@ afterAll(async () => {
 describe('test GET /users', () =>{
   test("Returns all users", async () => {
         const response = await request(app)
-         .get(`/users`); //should add a .send({_token: testUserToken})
-        
+         .get(`/users`)
+         .send({_token: testUserToken}); 
+         
         expect(response.statusCode).toBe(200);
         expect(response.body.users.length).toBe(2);
     
   })  
-
-  test("Returns user by id", async () => {
+  
+  test("Gets error message without token for GET /users", async () => {
     const response = await request(app)
-     .get(`/users/${userId}`);
+     .get(`/users`)
+     .send({_token: 'faketoken'}); 
+     
+    expect(response.statusCode).toBe(401);
+    expect(response.body.error.message).toBe(loggedInErrMsg);
+    expect(response.body.users).toBeUndefined();
+
+})  
+
+  test("Returns user by id with correct token", async () => {
+    const response = await request(app)
+     .get(`/users/${userId}`)
+     .send({_token: testUserToken});
 
     expect(response.statusCode).toBe(200)
     expect(response.body.user.length).toBe(1);
@@ -61,18 +77,19 @@ describe('test GET /users', () =>{
 
   test("Returns error message for incorrect userid", async () => {
     const response = await request(app)
-     .get(`/users/0`);
+     .get(`/users/0`)
+     .send({_token: testUserToken});
      
-    expect(response.statusCode).toBe(404);
+    expect(response.statusCode).toBe(401);
     expect(response.body.user).toBeUndefined();
-    expect(response.body.error.message).toBe('User 0 not found');
+    expect(response.body.error.message).toBe(incorrectUserMsg);
   })
 
 })
 
 describe('test POST /users', () =>{
-    test("Able to create new user", async () => {
-          const response = await request(app)
+    test("Able to create new user and return a token", async () => {
+        const response = await request(app)
            .post(`/users`)
            .send({
             "email":"test@gmail.com", 
@@ -82,10 +99,12 @@ describe('test POST /users', () =>{
             "phone_num":"1234567980"
             }); //should add a .send({_token: testUserToken})
           
-          expect(response.statusCode).toBe(201);
-          expect(response.body.user.id).not.toBeUndefined();
-          expect(response.body.user.email).toBe("test@gmail.com");
-      
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toEqual(
+        expect.objectContaining({ _token: expect.any(String) })
+        );
+        expect(response.body.message).toEqual("User created")
+                
     })  
   
     test("Error message for new user without required information", async () => {
@@ -110,31 +129,33 @@ describe('test PATCH /users/:id', () =>{
             const response = await request(app)
             .patch(`/users/${userId}`)
             .send({
-            "first_name":"new",
-            "last_name":"name"
+            first_name:"new",
+            last_name:"name",
+            _token: testUserToken 
             }); //should add a .send({_token: testUserToken})
-            
+      
         expect(response.statusCode).toBe(200);
         expect(response.body.user.id).toBe(userId);
         expect(response.body.user.email).toBe('user@g.com');
 
-        let res = await request(app).get(`/users/${userId}`)
+        let res = await request(app).get(`/users/${userId}`).send({ _token: testUserToken})
+      
         expect(res.body.user[0].first_name).toBe('new');
-        expect(res.body.user[0].last_name).toBe('name');
-        
+        expect(res.body.user[0].last_name).toBe('name');        
     })  
 
-    test("Receive error message for updating nonexistent user id", async () =>{
+    test("Receive error message for updating incorrect user id", async () =>{
         const response = await request(app)
             .patch(`/users/0`)
             .send({
-            "first_name":"one",
-            "last_name":"two"
+            first_name:"one",
+            last_name:"two",
+            _token: testUserToken 
             });
 
-        expect(response.statusCode).toBe(404);
+        expect(response.statusCode).toBe(401);
         expect(response.body.user).toBeUndefined();
-        expect(response.body.error.message).toBe('User 0 not found');
+        expect(response.body.error.message).toBe(incorrectUserMsg);
     })
 
     test("Error message for updating user information to existing email", async () => {
@@ -144,8 +165,9 @@ describe('test PATCH /users/:id', () =>{
             "email":"user2@g.com",
             "first_name":"tester",
             "last_name":"testing",
-            "phone_num":"1234567980"
-            }); //should add a .send({_token: testUserToken})
+            "phone_num":"1234567980",
+            _token: testUserToken 
+            }); //update this when using jsonschema
         
         expect(response.body.error.message).not.toBeUndefined();
         expect(response.statusCode).toBe(500);    
@@ -156,27 +178,28 @@ describe('test PATCH /users/:id', () =>{
 describe('test DELETE /users/:id', () =>{
     test("Able to delete user", async () => {
         const response = await request(app)
-        .delete(`/users/${userId}`);
+        .delete(`/users/${userId}`)
+        .send({_token: testUserToken});
         
         console.log(response,"DELE RES BOD")
         
         expect(response.statusCode).toBe(204);
         // expect(response.message).toBe(`User ${userId} deleted`);
     
-        let res = await request(app).get(`/users`)
+        let res = await request(app).get(`/users`).send({_token: testUserToken});
         expect(res.body.users.length).toBe(1);
        
     })  
     
     test("Receive error message for updating nonexistent user id", async () =>{
         const response = await request(app)
-        .delete(`/users/0`);
+        .delete(`/users/0`)
+        .send({_token: testUserToken});
         
-        expect(response.statusCode).toBe(404);
+        expect(response.statusCode).toBe(401);
         expect(response.body.user).toBeUndefined();
-        expect(response.body.error.message).toBe(`User 0 not found`);
-    })
-    
+        expect(response.body.error.message).toBe(incorrectUserMsg);
+    })  
 })
 
   

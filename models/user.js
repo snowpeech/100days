@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const db = require('../db')
-const {BCRYPT_WORK_FACTOR} = require('../config')
+const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
 const ExpressError = require('../helpers/expressError')
 const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
 
@@ -15,9 +15,32 @@ class User {
             (email, password, first_name, last_name, location, gender, phone_num) 
             VALUES ($1, $2, $3, $4, $5,$6,$7) RETURNING id, email
         `,[email, hashedPassword, first_name, last_name, location, gender, phone_num]);
-        //will need to add jwt here with email?
         
-        return results.rows[0];
+        let user = results.rows[0]
+
+        let token = jwt.sign(user,SECRET)
+        
+        return token;
+    }
+
+    static async login(email,password){
+        const result = await db.query(
+            `SELECT id, email, password, first_name, last_name FROM users WHERE email = $1`,
+            [email]
+          );
+        //can change what we're selecting. currently not using first & last name
+        let user = result.rows[0];
+        
+        if (user && (await bcrypt.compare(password, user.password))) {
+            let { id } = user;
+            user = { email, id };
+        
+            let token = jwt.sign(user, SECRET); 
+            
+            return token;
+        } else {
+            throw new ExpressError("Wrong password/username", 400);
+        }
     }
 
     static async getAll(){

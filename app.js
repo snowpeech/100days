@@ -5,10 +5,12 @@ const morgan = require('morgan');
 
 const ExpressError = require("./helpers/expressError");
 const userRoutes = require("./routes/users");
+const {authenticateJWT} = require('./middleware/auth')
 
 app.use(express.json()); // Parse request bodies for JSON
 app.use(cors());
 app.use(morgan("tiny"));
+app.use(authenticateJWT);
 
 /* routes */
 app.use("/users", userRoutes);
