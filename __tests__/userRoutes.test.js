@@ -97,16 +97,30 @@ describe('test POST /users', () =>{
             "first_name":"tester",
             "last_name":"testing",
             "phone_num":"1234567980"
-            }); //should add a .send({_token: testUserToken})
+            }); 
           
         expect(response.statusCode).toBe(201);
         expect(response.body).toEqual(
         expect.objectContaining({ _token: expect.any(String) })
         );
         expect(response.body.message).toEqual("User created")
-                
     })  
-  
+    
+    test("Error message for new user with incorrect data type", async () => {
+        const response = await request(app)
+        .post(`/users`)
+        .send({
+         "email":"test@gmail.com", 
+         "password":"secret123",
+         "first_name":"tester",
+         "last_name":"testing",
+         "phone_num":1234567980
+         }); 
+       
+      expect(response.body.error.message).not.toBeUndefined();
+      expect(response.statusCode).toBe(400);
+    })
+
     test("Error message for new user without required information", async () => {
         const response = await request(app)
         .post(`/users`)
@@ -115,11 +129,25 @@ describe('test POST /users', () =>{
          "first_name":"tester",
          "last_name":"testing",
          "phone_num":"1234567980"
-         }); //should add a .send({_token: testUserToken})
+         }); 
+       
+      expect(response.body.error.message).not.toBeUndefined();
+      expect(response.statusCode).toBe(400);
+    })
+
+    test("Error message for duplicate email", async () => {
+        const response = await request(app)
+        .post(`/users`)
+        .send({
+         "email":"user@g.com",
+         "password":"secret123",
+         "first_name":"tester",
+         "last_name":"testing",
+         "phone_num":"1234567980"
+         }); 
        
       expect(response.body.error.message).not.toBeUndefined();
       expect(response.statusCode).toBe(500);
-          
     })
   
   })
@@ -158,11 +186,12 @@ describe('test PATCH /users/:id', () =>{
         expect(response.body.error.message).toBe(incorrectUserMsg);
     })
 
-    test("Error message for updating user information to existing email", async () => {
+    test("Error message for updating user email or password", async () => {
         const response = await request(app)
         .patch(`/users/${userId}`)
         .send({
             "email":"user2@g.com",
+            "password":'somestring',
             "first_name":"tester",
             "last_name":"testing",
             "phone_num":"1234567980",
@@ -170,7 +199,7 @@ describe('test PATCH /users/:id', () =>{
             }); //update this when using jsonschema
         
         expect(response.body.error.message).not.toBeUndefined();
-        expect(response.statusCode).toBe(500);    
+        expect(response.statusCode).toBe(400);    
     })
 
 })
@@ -180,8 +209,6 @@ describe('test DELETE /users/:id', () =>{
         const response = await request(app)
         .delete(`/users/${userId}`)
         .send({_token: testUserToken});
-        
-        console.log(response,"DELE RES BOD")
         
         expect(response.statusCode).toBe(204);
         // expect(response.message).toBe(`User ${userId} deleted`);

@@ -17,7 +17,7 @@ class User {
         `,[email, hashedPassword, first_name, last_name, location, gender, phone_num]);
         
         let user = results.rows[0]
-
+        console.log("NEW USER ID:",user.id)
         let token = jwt.sign(user,SECRET)
         
         return token;
@@ -68,7 +68,7 @@ class User {
             userId
             );
         const results = await db.query(`${query} RETURNING id, email`, values);            
-        
+        //need to update to hash password if part of update... use jsonschema to not allow password updates
         if(!results.rows[0]){
             throw new ExpressError(`User ${userId} not found`, 404)
         }

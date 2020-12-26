@@ -3,12 +3,22 @@ const ExpressError = require('../helpers/expressError');
 const router = new express.Router();
 const { ensureLoggedIn, ensureCorrectUser} = require('../middleware/auth')
 const User = require('../models/user') 
+const jsonschema = require('jsonschema');
+const userSchema = require('../schemas/userSchema.json')
+const updateUserSchema = require('../schemas/updateUserSchema.json')
 
 /* Register new user*/
 router.post('/', async (req,res,next) => {
     try {
+        const result = jsonschema.validate(req.body, userSchema);
+        
+        if(!result.valid){
+            let listOfErrors = result.errors.map(error => error.stack);
+            let error = new ExpressError(listOfErrors, 400);
+            return next(error);
+        }
+
         const {email, password, first_name, last_name, location, gender, phone_num} = req.body 
-        //if not provided ,is undefined
         const userObj = {email, password, first_name, last_name, location, gender, phone_num};
         
         let token = await User.register(userObj);
@@ -26,6 +36,7 @@ router.post('/login', async (req,res,next) => {
     try{
         const {email, password} = req.body;
         if(!email || !password){
+            //easier than using another schema
             throw new ExpressError("Username and password required", 404)
         }
         let token = await User.login(email, password);
@@ -64,6 +75,14 @@ router.get('/:id', ensureCorrectUser, async (req,res, next)=> {
 /* update a user - will need validation */
 router.patch('/:id',ensureCorrectUser, async (req, res, next) =>{
     try {
+        const result = jsonschema.validate(req.body, updateUserSchema);
+        
+        if(!result.valid){
+            let listOfErrors = result.errors.map(error => error.stack);
+            let error = new ExpressError(listOfErrors, 400);
+            return next(error);
+        }
+
         const response = await User.update(req.params.id,req.body)
             
         return res.json({user: response});
@@ -79,12 +98,7 @@ router.delete('/:id', ensureCorrectUser, async (req, res, next) =>{
     try {
         const response = await User.delete(req.params.id);
 
-        console.log('user route', response)
-        // console.log(res.status(204).json({"message":`User ${req.params.id} deleted`}))
-        // console.log('user route', res.status(204).json({message:response}))
-        // return res.status(204).json({ message: "User deleted" });
         return res.status(204).json({user: response});
-
     } catch(e){
         return next(e)
     }
