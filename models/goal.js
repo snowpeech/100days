@@ -98,6 +98,13 @@ class Goal {
         if(!results.rows[0]){
             throw new ExpressError(`User ${userId} not found`, 404)
         }
+
+        //update tags.. getting array of tags. 
+        //get tag #s
+        //insert values as separate queries?
+
+
+
         return results.rows[0]
     }
 }

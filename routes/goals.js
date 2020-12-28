@@ -13,7 +13,7 @@ router.post('/', ensureLoggedIn, async(req,res,next) => {
 
         let {goal, start_day, user_def1, user_def2, user_def3, tagArr} = req.body
         goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}
-        console.log("GOAL OBK::",goalObj)
+        console.log("GOAL OBJ::",goalObj)
         let response = await Goal.create(goalObj)
 
         return res.json({msg:"hello", response})
