@@ -1,7 +1,7 @@
 const db = require('../db')
 const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
 const ExpressError = require('../helpers/expressError')
-// const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
+const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
 
 class Goal {
     static async create({goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}){
@@ -75,9 +75,30 @@ class Goal {
         return results.rows[0]
     }
 
-    static async update(goalId){
-        //tbd 
-        //
+    static async update(goalId, goalObj){
+        //tbd FROM USERS.. need to figure out how to update tags. 
+        //remove tags from partial update query..
+        let tags;
+        for (let key in itemsObj) {
+            if (key.startsWith("tag")) {
+                tags = itemsObj[key]
+              delete itemsObj[key]
+            }
+          }
+        console.log("UPDATE. TAGS:",tags)
+        let { query, values } = sqlForPartialUpdate(
+            "goals",
+            goalObj,
+            "goal_id",
+            goalId
+            );
+            console.log("Q & V :::", query, values)
+        const results = await db.query(`${query} RETURNING goal_id`, values);            
+        
+        if(!results.rows[0]){
+            throw new ExpressError(`User ${userId} not found`, 404)
+        }
+        return results.rows[0]
     }
 }
 

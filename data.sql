@@ -1,8 +1,8 @@
 -- DROP DATABASE IF EXISTS hundreddays;
 
-CREATE DATABASE hundreddays;
+-- CREATE DATABASE hundreddays;
 
-\c hundreddays;
+-- \c hundreddays;
 
 DROP TABLE IF EXISTS users, goals, am, pm, tendays, tags, goal_tags;
 
