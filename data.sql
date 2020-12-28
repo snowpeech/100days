@@ -26,10 +26,10 @@ CREATE TABLE users
 CREATE TABLE goals
 (
     goal_id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER NOT NULL REFERENCES users(id),
     goal text NOT NULL,
 
-    start_day DATE DEFAULT CURRENT_TIMESTAMP,
+    start_day DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_def1 text DEFAULT NULL,
     user_def2 text DEFAULT NULL,
     user_def3 text DEFAULT NULL
@@ -94,8 +94,9 @@ CREATE TABLE tags
 
 CREATE TABLE goal_tags
 (
-    goal_id INTEGER REFERENCES goals(goal_id) ON DELETE CASCADE,
-    tag_id INTEGER REFERENCES tags(tag_id) ON DELETE CASCADE
+    goal_id INTEGER NOT NULL REFERENCES goals(goal_id) ON DELETE CASCADE,
+    tag_id INTEGER NOT NULL REFERENCES tags(tag_id) ON DELETE CASCADE,
+    PRIMARY KEY (goal_id, tag_id)
 );
 
 
