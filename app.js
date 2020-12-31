@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const ExpressError = require("./helpers/expressError");
 const userRoutes = require("./routes/users");
 const goalRoutes = require("./routes/goals")
+const postRoutes = require("./routes/posts")
 const {authenticateJWT} = require('./middleware/auth')
 
 app.use(express.json()); // Parse request bodies for JSON
@@ -16,6 +17,7 @@ app.use(authenticateJWT);
 /* routes */
 app.use("/users", userRoutes);
 app.use("/goals", goalRoutes);
+app.use("/posts", postRoutes);
 
 /** 404 error handler **/
 app.use(function (req,res, next) {

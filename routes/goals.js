@@ -13,7 +13,7 @@ router.post('/', ensureLoggedIn, async(req,res,next) => {
 
         let {goal, start_day, user_def1, user_def2, user_def3, tagArr} = req.body
         goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}
-        console.log("GOAL OBJ::",goalObj)
+        // console.log("GOAL OBJ::",goalObj)
         let response = await Goal.create(goalObj)
 
         return res.json({msg:"hello", response})
@@ -47,21 +47,19 @@ router.get('/', ensureLoggedIn, async(req,res,next) => {
     }
 })
 
-/* update user's goal */
+/* update user's goal by goal id */
 router.post('/:id', ensureLoggedIn, async(req,res,next) => {
     try {
+        
         let targetGoal = await Goal.getOne(req.params.id);
-
-        if(targetGoal[0].user_id !== req.user.id){
+        
+        if(targetGoal.user_id !== req.user.id){
             throw new ExpressError("Unauthorized", 401)
         }
         
-        // let {goal, start_day, user_def1, user_def2, user_def3, tagArr} = req.body
-        // goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}
-        // console.log("GOAL OBK::",goalObj)
         const response = await Goal.update(req.params.id, req.body)
 
-        return res.json({msg:"hello", response})
+        return res.json({msg:"updated"})
     } catch(e) {
         return next(e)
     }
@@ -70,10 +68,9 @@ router.post('/:id', ensureLoggedIn, async(req,res,next) => {
 /* delete's user's goal by goal id */
 router.delete('/:id', ensureLoggedIn, async(req,res,next)=>{
     try{
-        // let userId = req.user.id;
         let targetGoal = await Goal.getOne(req.params.id);
 
-        if(targetGoal[0].user_id !== req.user.id){
+        if(targetGoal.user_id !== req.user.id){
             throw new ExpressError("Unauthorized", 401)
         }
 

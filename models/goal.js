@@ -1,7 +1,8 @@
 const db = require('../db')
-const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
+// const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
 const ExpressError = require('../helpers/expressError')
 const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
+const Tag = require("./tag")
 
 class Goal {
     static async create({goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}){
@@ -29,23 +30,9 @@ class Goal {
 
         }
         const goalId = results.rows[0].goal_id;
-        // console.log("NEW GOAL ID:", goalId)
-        //results = new goal id
-        
-        //create a sql string
-        // console.log("tagArr", tagArr)
-        let tagQuery = tagArr.map((val,ind) =>{return `tag =$${ind + 1} `}).join('OR ')
-        //get tagids
-        // console.log("tag query", tagQuery)
-        let response = await db.query(`SELECT tag_id FROM tags WHERE ${tagQuery}`,tagArr)
-        let tagIds = response.rows.map(val => {return Object.values(val)[0]});
-        //create sql string with tagIds ($1, tagid), (),
-        // console.log("tagIds", tagIds)
-        let goalTagQuery = tagIds.map((val,ind) => {return `(${goalId}, $${ind +1}) `}).join();
-        //insert into goal_tags table
-        // console.log("goalTagQuery", goalTagQuery)
-        let tagResults = await db.query(`INSERT INTO goal_tags (goal_id, tag_id) VALUES ${goalTagQuery}`,tagIds)
-        console.log("tagResults",tagResults)
+
+        let tagRes = await Tag.addTagsToGoal(tagArr,goalId)
+        console.log("tagRes ROUTES",tagRes)
         return results.rows  
     }
 
@@ -60,13 +47,40 @@ class Goal {
     }
 
     static async getOne(goalId){
-        const results = await db.query(`SELECT * FROM goals WHERE goal_id = $1`,[goalId])
+        const results = await db.query(`
+        SELECT * FROM goals WHERE goal_id = $1`,[goalId])
+        // const results = await db.query(`SELECT * FROM goals WHERE goal_id = $1`,[goalId])
         
         if(!results.rows){
             throw new ExpressError(`Goal ${goalId} not found`, 404)
         }
         
-        return results.rows
+        return results.rows[0]
+        // let {goal, userId, start_day, user_def1, user_def2, user_def3} = results.rows[0];
+        // let tags = result.rows.map(res => res.tag);
+        // let goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tags}
+        
+        // return goalObj
+    }
+
+    static async getOneWithTags(goalId){
+        const results = await db.query(`
+        SELECT g.goal, g.start_day, g.user_def1, g.user_def2, g.user_def3 
+            FROM goals AS g 
+            LEFT JOIN goal_tags AS gt ON g.goal_id = gt.goal_id
+            LEFT JOIN tags AS t ON gt.tag_id = t.tag_id
+            WHERE g.goal_id = $1`,[goalId])
+        // const results = await db.query(`SELECT * FROM goals WHERE goal_id = $1`,[goalId])
+        
+        if(!results.rows){
+            throw new ExpressError(`Goal ${goalId} not found`, 404)
+        }
+        
+        let {goal, userId, start_day, user_def1, user_def2, user_def3} = results.rows[0];
+        let tags = result.rows.map(res => res.tag);
+        let goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tags}
+        
+        return goalObj
     }
 
     static async delete(goalId){
@@ -79,13 +93,15 @@ class Goal {
         //tbd FROM USERS.. need to figure out how to update tags. 
         //remove tags from partial update query..
         let tags;
-        for (let key in itemsObj) {
+        console.log("UPDATE IN GOAL")
+        for (let key in goalObj) {
             if (key.startsWith("tag")) {
-                tags = itemsObj[key]
-              delete itemsObj[key]
+                tags = goalObj[key]
+              delete goalObj[key]
             }
           }
-        console.log("UPDATE. TAGS:",tags)
+        console.log("UPDATE. TAGS:",tags) 
+
         let { query, values } = sqlForPartialUpdate(
             "goals",
             goalObj,
@@ -93,23 +109,19 @@ class Goal {
             goalId
             );
             console.log("Q & V :::", query, values)
-        const results = await db.query(`${query} RETURNING goal_id`, values);            
-        
+        const results = await db.query(`${query} RETURNING goal_id`, values);  
+        console.log("RESULTS IN UPDATE ln 95",results)          
+        const tagResults = await Tag.updateGoalTags(tags, goalId);
+        console.log("GOAL MODEL tag results", tagResults)
         if(!results.rows[0]){
             throw new ExpressError(`User ${userId} not found`, 404)
         }
-
-        //update tags.. getting array of tags. 
-        //get tag #s
-        //insert values as separate queries?
-
-
 
         return results.rows[0]
     }
 }
 
-module.exports = Goal
+module.exports = Goal;
 
 // INSERT INTO goals
 //             (user_id, goal, start_day)

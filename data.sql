@@ -104,3 +104,28 @@ INSERT INTO users
     (email, password, first_name, last_name, location, gender, phone_num)
 VALUES
     ('g@gmail.com', 'secret123', 'lulu', 'nan', 'austin', 'f', '123-456-0789');
+
+
+INSERT INTO goals
+    (user_id, goal)
+    VALUES (1,'starting goal');
+
+INSERT INTO tags 
+    (tag) VALUES ('health'),('fitness'),('career'),('mental'),('spiritual'),('relationship'),('skill'),('music');
+
+INSERT INTO goal_tags (goal_id, tag_id) VALUES (1,1),(1,2),(1,3);
+
+INSERT INTO am (goal_id,day, gratitude, big_goal, task1, task2,task3) 
+    VALUES (1, 1,'good sleep', 'starting goal', 'one','2','3');
+
+INSERT INTO pm (goal_id, day, gratitude, obstacle1, solution1, discipline, overall_day, progress,reflect)
+    VALUES (1,1,'good day','kid','get stuff done first', 5,5,true,'I think it was a good day, got fun things to do that were not goal related');
+
+INSERT INTO tendays (goal_id,day,progress, win1, win2, win3, win_plan1, bad1, bad2, bad3, solution1,microgoal)
+    VALUES (1, 10, true, 'good week','new ideas', 'more creativity', 'meet one new person', 'slept in','stayed out late', 'too much prime rib', 'sleep by 10', 'make a goal');
+
+--not sure if tendays 'day' value should be 10 or 1 (x10)...tbd? maybe 10 so we can join and sort by day :)
+-- should I do a 100day goal? And have the option to split it by 7 days rather than 10 day reflection periods
+
+-- INSERT INTO pm (goal_id, day, gratitude, obstacle1, solution1, discipline, overall_day, progress,reflect)
+--     VALUES (5,11,'sunshine day','cat','get stuff done first', 3,7,true,'I think it was a good day, got fun things to do that were not goal related');

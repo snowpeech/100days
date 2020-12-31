@@ -23,18 +23,26 @@ class User {
         return token;
     }
 
-    static async login(email,password){
-        const result = await db.query(
-            `SELECT id, email, password, first_name, last_name FROM users WHERE email = $1`,
-            [email]
-          );
+    static async login(email,passwordIn){
+        // const result = await db.query(
+        //     `SELECT id, email, password, first_name, last_name FROM users WHERE email = $1`,
+        //     [email]
+        //   );
+        // let user = result.rows[0];
         //can change what we're selecting. currently not using first & last name
-        let user = result.rows[0];
+        const result = await db.query(`SELECT u.id, u.email, u.password, g.goal_id
+        FROM users AS u
+        INNER JOIN goals AS g
+        ON u.id = g.user_id
+        WHERE email = $1;
+        `,[email])
         
-        if (user && (await bcrypt.compare(password, user.password))) {
-            let { id } = user;
-            user = { email, id };
+        let {id, password} = result.rows[0];
+        let goals = result.rows.map(r => r.goal_id);
+        let user = {id, email, goals}
         
+        if (user && (await bcrypt.compare(passwordIn, password))) {
+            
             let token = jwt.sign(user, SECRET); 
             
             return token;
@@ -88,3 +96,9 @@ class User {
 }
 
 module.exports= User;
+
+// SELECT u.id, u.email, u.password, g.goal_id
+// FROM users AS u
+// INNER JOIN goals AS g
+// ON u.id = g.user_id
+// WHERE email = 'jojo@gmail.com';
