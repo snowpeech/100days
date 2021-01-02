@@ -1,4 +1,5 @@
-/** Generate query string for creating new row in a table, given an object with inputs (obj) and the table name (table)
+/** Generate query string for creating new row in a table,
+ *  given an object with keys as table column values and the table name (table)
  */
 function sqlForPost(obj, table) {
     let fields = [];

@@ -6,7 +6,14 @@ const sqlForPost = require('../helpers/sqlForPost')
 
 class Post {
     static async newPost(table, postObj){
-
+        const {queryStr, values} = sqlForPost(postObj,table);
+        console.log("Q & V",queryStr,values)
+        let result = await db.query(`${queryStr} RETURNING *`, values)
+        console.log(result.rows)
+        if(!result.rows[0]){
+            throw new ExpressError("Error posting",404)
+        }  
+        return result.rows      
     }
 
     /* get AM, PM, or a 10day post for a single goal and day */
@@ -34,6 +41,35 @@ class Post {
             }
 
         return result.rows
+    }
+    /* get all of a goals' am/pm posts */
+    static async getGoals(goalId){
+        let result = await db.query(`
+            SELECT * from am 
+            FULL OUTER JOIN pm ON am.day = pm.day 
+                AND am.goal_id = pm.goal_id
+            WHERE am.goal_id = $1 OR pm.goal_id = $1`,[goalId])
+        
+        if(!result.rows[0]){
+            throw new ExpressError("Goal has no posts",404)
+        }
+        return result.rows[0]
+    }
+
+    static async getOneDay(goalId, day){
+        let result = await db.query(`
+        SELECT *  from am 
+        FULL OUTER JOIN pm ON am.day = pm.day AND am.goal_id = pm.goal_id
+        WHERE (am.goal_id = $1 OR pm.goal_id = $1) 
+        AND (am.day = $2 OR pm.day =$2 )
+        `,[goalId,day])
+
+        if(!result.rows[0]){
+            throw new ExpressError("No posts found for day and goal", 404)
+        }
+
+        return result.rows[0]
+        
     }
 }
 

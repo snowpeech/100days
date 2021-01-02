@@ -39,18 +39,19 @@ CREATE TABLE am
 (
     goal_id INTEGER REFERENCES goals(goal_id) ON DELETE CASCADE,
     day SMALLINT NOT NULL,
-    gratitude text NOT NULL,
+    gratitude_am text NOT NULL,
     big_goal text NOT NULL,
     task1 text NOT NULL,
-    task2 text NOT NULL,
-    task3 text NOT NULL
+    task2 text ,
+    task3 text,
+    PRIMARY KEY (goal_id, day) 
 );
 
 CREATE TABLE pm
 (
     goal_id INTEGER REFERENCES goals(goal_id) ON DELETE CASCADE,
     day SMALLINT NOT NULL,
-    gratitude text NOT NULL,
+    gratitude_pm text NOT NULL,
     obstacle1 text NOT NULL,
     obstacle2 text ,
     obstacle3 text ,
@@ -63,7 +64,8 @@ CREATE TABLE pm
     user_def2 SMALLINT DEFAULT NULL,
     user_def3 SMALLINT DEFAULT NULL,
     progress BOOLEAN NOT NULL,
-    reflect text NOT NULL
+    reflect text NOT NULL,
+    PRIMARY KEY (goal_id, day)
 );
 
 CREATE TABLE tendays
@@ -72,18 +74,19 @@ CREATE TABLE tendays
     day SMALLINT NOT NULL,
     progress BOOLEAN NOT NULL,
     win1 text NOT NULL,
-    win2 text NOT NULL,
-    win3 text NOT NULL,
+    win2 text ,
+    win3 text ,
     win_plan1 text NOT NULL,
     win_plan2 text,
     win_plan3 text,
     bad1 text NOT NULL,
-    bad2 text NOT NULL,
-    bad3 text NOT NULL,
+    bad2 text ,
+    bad3 text ,
     solution1 text NOT NULL,
     solution2 text,
     solution3 text,
-    microgoal text NOT NULL
+    microgoal text NOT NULL,
+    PRIMARY KEY (goal_id, day)
 );
 
 CREATE TABLE tags
@@ -115,10 +118,10 @@ INSERT INTO tags
 
 INSERT INTO goal_tags (goal_id, tag_id) VALUES (1,1),(1,2),(1,3);
 
-INSERT INTO am (goal_id,day, gratitude, big_goal, task1, task2,task3) 
+INSERT INTO am (goal_id,day, gratitude_am, big_goal, task1, task2,task3) 
     VALUES (1, 1,'good sleep', 'starting goal', 'one','2','3');
 
-INSERT INTO pm (goal_id, day, gratitude, obstacle1, solution1, discipline, overall_day, progress,reflect)
+INSERT INTO pm (goal_id, day, gratitude_pm, obstacle1, solution1, discipline, overall_day, progress,reflect)
     VALUES (1,1,'good day','kid','get stuff done first', 5,5,true,'I think it was a good day, got fun things to do that were not goal related');
 
 INSERT INTO tendays (goal_id,day,progress, win1, win2, win3, win_plan1, bad1, bad2, bad3, solution1,microgoal)
