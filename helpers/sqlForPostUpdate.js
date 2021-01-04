@@ -11,9 +11,10 @@
  *
  */
 
-function sqlForPartialUpdate(table,itemsObj,key,id) {
+function sqlForPostUpdate(table, itemsObj, goalId,day) {
     // keep track of item indexes
     // store all the columns we want to update and associate with vals
+  
     let idx = 1;
     let columns = [];
   
@@ -31,13 +32,14 @@ function sqlForPartialUpdate(table,itemsObj,key,id) {
   
     // build query
     let cols = columns.join(", ");
-    let queryStr = `UPDATE ${table} SET ${cols} WHERE ${key}=$${idx}`;
+    let queryStr = `UPDATE ${table} SET ${cols} WHERE goal_id=$${idx} AND day = $${idx+1}`;
   
     let values = Object.values(itemsObj);
-    values.push(id);
+    values.push(goalId,day);
   
     return {queryStr, values};
   }
   
-  module.exports = sqlForPartialUpdate;
+  
+  module.exports = sqlForPostUpdate;
   

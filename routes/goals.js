@@ -1,34 +1,30 @@
 const express = require('express');
 const ExpressError = require('../helpers/expressError');
 const router = new express.Router();
-const { ensureLoggedIn } = require('../middleware/auth');
+const { ensureLoggedIn, ensureUserGoal } = require('../middleware/auth');
 const Goal = require('../models/goal');
 
-/* Create new goal */
+/* Create new goal, returns a token*/
 router.post('/', ensureLoggedIn, async(req,res,next) => {
     try {
         //create new goal with user id from req.user
-        let userId = req.user.id;
-        console.log("POST USER ID", userId)
+        req.body.user_id = req.user.id;
+        
+        let token = await Goal.create(req.body)
 
-        let {goal, start_day, user_def1, user_def2, user_def3, tagArr} = req.body
-        goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}
-        // console.log("GOAL OBJ::",goalObj)
-        let response = await Goal.create(goalObj)
-
-        return res.json({msg:"hello", response})
+        return res.status(201).json({message:"Goal created", _token:token})
     } catch(e) {
         return next(e)
     }
 })
 
 /* gets user's goal by goal id, only visible to creating user (may change visibility) */
-router.get('/:id', ensureLoggedIn, async(req,res,next) => {
+router.get('/:goalid', ensureUserGoal, async(req,res,next) => {
     try{
-        let goal = await Goal.getOne(req.params.id);
-        if(goal[0].user_id !== req.user.id){
-            throw new ExpressError("Unauthorized", 401)
-        }
+        let goal = await Goal.getOne(req.params.goalid);
+        // if(goal[0].user_id !== req.user.id){
+        //     throw new ExpressError("Unauthorized", 401)
+        // }
         return res.json({goal})
     } catch(e) {
         return next(e)
@@ -48,16 +44,9 @@ router.get('/', ensureLoggedIn, async(req,res,next) => {
 })
 
 /* update user's goal by goal id */
-router.post('/:id', ensureLoggedIn, async(req,res,next) => {
+router.patch('/:goalid', ensureUserGoal, async(req,res,next) => {
     try {
-        
-        let targetGoal = await Goal.getOne(req.params.id);
-        
-        if(targetGoal.user_id !== req.user.id){
-            throw new ExpressError("Unauthorized", 401)
-        }
-        
-        const response = await Goal.update(req.params.id, req.body)
+        const response = await Goal.update(req.params.goalid, req.body)
 
         return res.json({msg:"updated"})
     } catch(e) {
@@ -66,17 +55,17 @@ router.post('/:id', ensureLoggedIn, async(req,res,next) => {
 })
 
 /* delete's user's goal by goal id */
-router.delete('/:id', ensureLoggedIn, async(req,res,next)=>{
+router.delete('/:goalid', ensureUserGoal, async(req,res,next)=>{
     try{
-        let targetGoal = await Goal.getOne(req.params.id);
+        let targetGoal = await Goal.getOne(req.params.goalid);
 
         if(targetGoal.user_id !== req.user.id){
             throw new ExpressError("Unauthorized", 401)
         }
 
-        let response = await Goal.delete(req.params.id);
+        let token = await Goal.delete(req.params.goalid);
 
-        return res.status(204).json({message: "Goal deleted"});
+        return res.status(204).json({message: "Goal deleted", _token:token});
 
     } catch(e) {
         return next(e)

@@ -1,39 +1,47 @@
+const jwt = require('jsonwebtoken')
 const db = require('../db')
-// const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
+const {SECRET} = require('../config')
 const ExpressError = require('../helpers/expressError')
 const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
+const sqlForPost = require('../helpers/sqlForPost')
 const Tag = require("./tag")
 
 class Goal {
-    static async create({goal, userId, start_day, user_def1, user_def2, user_def3, tagArr}){
-        let results;
-        //can we make this better?
-        if(start_day){
-            console.log("WITH START:[userId, goal, start, user_def1, user_def2, user_def3]", [userId, goal, start_day, user_def1, user_def2, user_def3])
+    static async create(goalObj){
+        
+        // filter out tagArr  
+        const {tagArr} = goalObj
+        delete goalObj[tagArr];
 
-            results = await db.query(`
-                    INSERT INTO goals
-                    (user_id, goal, start_day, user_def1, user_def2, user_def3)
-                    VALUES ($1, $2, $3, $4, $5)
-                    RETURNING goal_id
-                `, [userId, goal, start_day, user_def1, user_def2, user_def3]
-                )
-        } else {
-            console.log("no start day:[userId, goal, user_def1, user_def2, user_def3]", [userId, goal, user_def1, user_def2, user_def3])
-            results = await db.query(`
-                    INSERT INTO goals
-                    (user_id, goal, user_def1, user_def2, user_def3)
-                    VALUES ($1, $2, $3, $4, $5)
-                    RETURNING goal_id
-                `, [userId, goal, user_def1, user_def2, user_def3]
-                )
-
-        }
+        const {queryStr, values} = sqlForPost(goalObj,"goals");
+        console.log("Q&V:::",queryStr, values)
+        const results = await db.query(`${queryStr} RETURNING * `,values)
+        console.log(results.rows)
         const goalId = results.rows[0].goal_id;
+        if(tagArr){
+            let tagRes = await Tag.addTagsToGoal(tagArr,goalId)
+            console.log("TAG RES:",tagRes)
+        }
+        
+        let token = this.updateTokenGoals(goalObj.user_id)
+        return token
+    }
 
-        let tagRes = await Tag.addTagsToGoal(tagArr,goalId)
-        console.log("tagRes ROUTES",tagRes)
-        return results.rows  
+    static async updateTokenGoals(userId){
+        const result = await db.query(`
+            SELECT u.id, u.email, g.goal_id
+            FROM users AS u
+            INNER JOIN goals AS g
+            ON u.id = g.user_id
+            WHERE u.id = $1;`,[userId])
+            
+        let {id, email} = result.rows[0];
+        let goals = result.rows.map(r => r.goal_id);
+        let user = {id, email, goals}
+        console.log("LOGIN USER",user)
+        
+        let token = jwt.sign(user, SECRET); 
+        return token;
     }
 
     static async getAll(userId){
@@ -47,20 +55,15 @@ class Goal {
     }
 
     static async getOne(goalId){
+        
         const results = await db.query(`
         SELECT * FROM goals WHERE goal_id = $1`,[goalId])
-        // const results = await db.query(`SELECT * FROM goals WHERE goal_id = $1`,[goalId])
         
         if(!results.rows){
             throw new ExpressError(`Goal ${goalId} not found`, 404)
         }
         
         return results.rows[0]
-        // let {goal, userId, start_day, user_def1, user_def2, user_def3} = results.rows[0];
-        // let tags = result.rows.map(res => res.tag);
-        // let goalObj = {goal, userId, start_day, user_def1, user_def2, user_def3, tags}
-        
-        // return goalObj
     }
 
     static async getOneWithTags(goalId){
@@ -85,34 +88,34 @@ class Goal {
 
     static async delete(goalId){
         
-        const results = await db.query(`DELETE FROM goals WHERE goal_id = $1 RETURNING goal_id`, [goalId])
-        return results.rows[0]
+        const results = await db.query(`DELETE FROM goals WHERE goal_id = $1 RETURNING user_id`, [goalId])
+        let token = this.updateTokenGoals(results.rows[0].user_id)
+        
+        return token
     }
 
     static async update(goalId, goalObj){
-        //tbd FROM USERS.. need to figure out how to update tags. 
-        //remove tags from partial update query..
+        //remove tags and add in.. 
         let tags;
-        console.log("UPDATE IN GOAL")
+        
         for (let key in goalObj) {
             if (key.startsWith("tag")) {
                 tags = goalObj[key]
               delete goalObj[key]
             }
           }
-        console.log("UPDATE. TAGS:",tags) 
 
-        let { query, values } = sqlForPartialUpdate(
+        let { queryStr, values } = sqlForPartialUpdate(
             "goals",
             goalObj,
             "goal_id",
             goalId
             );
-            console.log("Q & V :::", query, values)
-        const results = await db.query(`${query} RETURNING goal_id`, values);  
-        console.log("RESULTS IN UPDATE ln 95",results)          
+            console.log("Q & V :::", queryStr, values)
+        const results = await db.query(`${queryStr} RETURNING goal_id`, values);  
+                 
         const tagResults = await Tag.updateGoalTags(tags, goalId);
-        console.log("GOAL MODEL tag results", tagResults)
+        
         if(!results.rows[0]){
             throw new ExpressError(`User ${userId} not found`, 404)
         }

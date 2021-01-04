@@ -35,9 +35,10 @@ router.post('/', async (req,res,next) => {
 router.post('/login', async (req,res,next) => {
     try{
         const {email, password} = req.body;
+
         if(!email || !password){
             //easier than using another schema
-            throw new ExpressError("Username and password required", 404)
+            throw new ExpressError("Email and password required", 404)
         }
         let token = await User.login(email, password);
         

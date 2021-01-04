@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const app = express();
 const cors = require("cors");
 const morgan = require('morgan');
@@ -9,7 +10,8 @@ const goalRoutes = require("./routes/goals")
 const postRoutes = require("./routes/posts")
 const {authenticateJWT} = require('./middleware/auth')
 
-app.use(express.json()); // Parse request bodies for JSON
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);

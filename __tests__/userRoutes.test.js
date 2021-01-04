@@ -27,7 +27,6 @@ beforeEach(async () => {
           RETURNING id, email`
     );
     userId = results.rows[0].id;
-    // const testUser = { username: "user[0]", is_admin: false };
     testUserToken = jwt.sign(results.rows[0], SECRET);
 });
 
@@ -45,8 +44,8 @@ describe('test GET /users', () =>{
         const response = await request(app)
          .get(`/users`)
          .send({_token: testUserToken}); 
-         
-        expect(response.statusCode).toBe(200);
+        
+        expect(response.status).toBe(200);
         expect(response.body.users.length).toBe(2);
     
   })  
