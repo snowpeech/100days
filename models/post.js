@@ -5,7 +5,21 @@ const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
 const sqlForPost = require('../helpers/sqlForPost')
 
 class Post {
-    static async newPost(table, postObj){
+    // static async newPost(table, postObj){
+    //     const {queryStr, values} = sqlForPost(postObj,table);
+    //     console.log("Q & V",queryStr,values)
+    //     let result = await db.query(`${queryStr} RETURNING *`, values)
+    //     console.log(result.rows)
+    //     if(!result.rows[0]){
+    //         throw new ExpressError("Error posting",404)
+    //     }  
+    //     return result.rows      
+    // }
+    static async newPost(table, postObj, goalId,day){
+        //push goalId and day into postObj
+        console.log("table",table,postObj, goalId,day)
+        postObj["day"] =day;
+        postObj["goal_id"]=goalId;
         const {queryStr, values} = sqlForPost(postObj,table);
         console.log("Q & V",queryStr,values)
         let result = await db.query(`${queryStr} RETURNING *`, values)
@@ -13,7 +27,7 @@ class Post {
         if(!result.rows[0]){
             throw new ExpressError("Error posting",404)
         }  
-        return result.rows      
+        return result.rows
     }
 
     /* get AM, PM, or a 10day post for a single goal and day */
@@ -70,6 +84,28 @@ class Post {
 
         return result.rows[0]
         
+    }
+
+    static async updatePost(table, postObj, goalId, day){
+        const {queryStr, values} = sqlForPartialUpdate(table,postObj,goalId,day);
+        console.log("Q & V",queryStr,values)
+        let result = await db.query(`${queryStr} RETURNING *`, values)
+        console.log(result.rows)
+        if(!result.rows[0]){
+            throw new ExpressError("Goal / day post does not exist",404)
+        }  
+        return result.rows   
+    }
+
+    static async deletePost(table, goalId, day){
+        
+        let result = await db.query(`
+            DELETE FROM ${table} WHERE goal_id =$1 AND day =$2 
+            RETURNING goal_id, day`,[goalId,day])
+        if(!result.rows[0]){
+            throw new ExpressError("Goal / day post does not exist",404)
+        }
+        return result.rows
     }
 }
 

@@ -61,6 +61,7 @@ router.get('/:goalid/:day/pm',async (req, res,next) => {
 })
 
 /* GET a goal's day's 10day post */
+//Should get metrics in this route too...
 router.get('/:goalid/:day/tendays',async (req, res,next) => {
     try {
         const result = await Post.getMid('tendays',req.params.goalid, req.params.day);
@@ -70,7 +71,7 @@ router.get('/:goalid/:day/tendays',async (req, res,next) => {
     }
 })
 
-/* GET PM metrics for 10day */
+/* GET PM metrics for 10day */ 
 router.get('/:goalid/:day/metrics',async (req, res,next) => {
     try {
         const result = await Post.getMetrics(req.params.goalid, req.params.day)
@@ -83,55 +84,46 @@ router.get('/:goalid/:day/metrics',async (req, res,next) => {
 
 /* GET user's latest posts??  */
 
-/* post a goal's day's am post */
-router.post('/:goalid/:day/am', async (req,res,next) => {
+/* post a goal's day's post */
+router.post('/:goalid/:day/:posttype', async (req,res,next) => {
     try {
-        const {goalid, day} = req.params
-        const {gratitude_am, big_goal, task1, task2,task3} = req.body 
-        const postObj ={goal_id:goalid, day, gratitude_am, big_goal, task1, task2,task3}
-        
-        const response = await Post.newPost('am',postObj)
+        const {goalid, day, posttype} = req.params
+        const response = await Post.newPost(posttype, req.body,goalid,day)
         if(!response){throw new ExpressError("Error processing", 404)}
         return res.json({message:"success"})
     } catch(e) {
         return next(e)
     }
 })
-/* post a goal's day's pm post */
-router.post('/:goalid/:day/pm', async (req,res,next) => {
-    try {
-        const {goalid, day} = req.params
-        const {gratitude_pm, obstacle1, obstacle2, obstacle3, solution1, solution2, solution3, discipline, overall_day, user_def1, user_def2, user_def3, progress, reflect} = req.body 
-        const postObj ={goal_id:goalid, day, gratitude_pm, obstacle1, obstacle2, obstacle3, solution1, solution2, solution3, discipline, overall_day, user_def1, user_def2, user_def3, progress, reflect}
-    
-        const response = await Post.newPost('pm',postObj)
-        if(!response){throw new ExpressError("Error processing", 404)}
-        return res.json({message:"success"})
-    } catch(e) {
-        return next(e)
-    }
-})
-
-router.post('/:goalid/:day/tendays', async (req,res,next) => {
-    try {
-        const {goalid, day} = req.params
-        const {accomplished, win1,win2,win3,win_plan1, win_plan2, win_plan3, bad1, bad2, bad3, solution1, solution2, solution3, microgoal} = req.body 
-        const postObj ={goal_id:goalid, day, accomplished, win1,win2,win3,win_plan1, win_plan2, win_plan3, bad1, bad2, bad3, solution1, solution2, solution3, microgoal}
-        
-        const response = await Post.newPost('tendays',postObj)
-        if(!response){throw new ExpressError("Error processing", 404)}
-        return res.json({message:"success"})
-    } catch(e) {
-        return next(e)
-    }
-})
-/* post a goal's day's 10day post */
 
 /* update a goal's day's am post */
-/* update a goal's day's pm post */
-/* update a goal's day's 10day post */
+router.post('/:goalid/:day/:posttype/update', async (req,res,next) => {
+    try {
+        const {goalid, day,posttype} = req.params
+        
+        const response = await Post.updatePost(posttype,req.body,goalid,day)
+        if(!response){throw new ExpressError("Error processing", 404)}
+        return res.json({message:"success"})
+    } catch(e) {
+        return next(e)
+    }
+})
 
 /* delete a goal's day's am post */
+router.delete('/:goalid/:day/:posttype/delete', async (req,res,next) => {
+    try {
+        const {goalid, day,posttype} = req.params
+
+        const response = await Post.deletePost(posttype,goalid,day)
+        
+        if(!response){throw new ExpressError("Error processing", 404)}
+        
+        return res.json({message:`day: ${day} ${posttype} of goal: ${goalid} -  deleted`})
+    } catch(e) {
+        return next(e)
+    }
+})
+
 /* delete a goal's day's pm post */
 /* delete a goal's day's 10day post */
 

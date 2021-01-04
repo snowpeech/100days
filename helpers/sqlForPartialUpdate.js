@@ -11,7 +11,7 @@
  *
  */
 
-function sqlForPartialUpdate(table, itemsObj, key, id) {
+function sqlForPartialUpdate(table, itemsObj, key1,key2) {
     // keep track of item indexes
     // store all the columns we want to update and associate with vals
   
@@ -32,12 +32,12 @@ function sqlForPartialUpdate(table, itemsObj, key, id) {
   
     // build query
     let cols = columns.join(", ");
-    let query = `UPDATE ${table} SET ${cols} WHERE ${key}=$${idx}`;
+    let queryStr = `UPDATE ${table} SET ${cols} WHERE goal_id=$${idx} AND day = $${idx+1}`;
   
     let values = Object.values(itemsObj);
-    values.push(id);
+    values.push(key1,key2);
   
-    return {query, values};
+    return {queryStr, values};
   }
   
   

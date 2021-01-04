@@ -63,7 +63,6 @@ CREATE TABLE pm
     user_def1 SMALLINT DEFAULT NULL,
     user_def2 SMALLINT DEFAULT NULL,
     user_def3 SMALLINT DEFAULT NULL,
-    progress BOOLEAN NOT NULL,
     reflect text NOT NULL,
     PRIMARY KEY (goal_id, day)
 );
@@ -72,7 +71,7 @@ CREATE TABLE tendays
 (
     goal_id INTEGER REFERENCES goals(goal_id) ON DELETE CASCADE,
     day SMALLINT NOT NULL,
-    progress BOOLEAN NOT NULL,
+    accomplished BOOLEAN NOT NULL,
     win1 text NOT NULL,
     win2 text ,
     win3 text ,
