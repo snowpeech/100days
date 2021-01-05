@@ -1,0 +1,130 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "user_id": 2,
+            "goal": "make hot sauce",
+            "start_day": "2021-01-04T08:00:00.000Z",
+            "user_def1": "mood",
+            "user_def2": "sleep",
+            "user_def3": "dreams",
+            "tagArr": [
+                "health",
+                "fitness"
+            ],
+            "_token": "stringwithalotofcharacters"
+        }
+    ],
+    "required": [
+        "user_id",
+        "goal"
+    ],
+    "properties": {
+        "user_id": {
+            "$id": "#/properties/user_id",
+            "type": "integer",
+            "title": "The user_id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                2
+            ]
+        },
+        "goal": {
+            "$id": "#/properties/goal",
+            "type": "string",
+            "title": "The goal schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "make hot sauce"
+            ]
+        },
+        "start_day": {
+            "$id": "#/properties/start_day",
+            "type": "string",
+            "title": "The start_day schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "2021-01-04T08:00:00.000Z"
+            ]
+        },
+        "user_def1": {
+            "$id": "#/properties/user_def1",
+            "type": "string",
+            "title": "The user_def1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "mood"
+            ]
+        },
+        "user_def2": {
+            "$id": "#/properties/user_def2",
+            "type": "string",
+            "title": "The user_def2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "sleep"
+            ]
+        },
+        "user_def3": {
+            "$id": "#/properties/user_def3",
+            "type": "string",
+            "title": "The user_def3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "dreams"
+            ]
+        },
+        "tagArr": {
+            "$id": "#/properties/tagArr",
+            "type": "array",
+            "title": "The tagArr schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    1,
+                    2
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/tagArr/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/tagArr/items/anyOf/0",
+                        "type": "string",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0,
+                        "examples": [
+                            "health",
+                            "fitness"
+                        ]
+                    }
+                ]
+            }
+        },
+        "_token": {
+            "$id": "#/properties/_token",
+            "type": "string",
+            "title": "The _token schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "stringwithalotofcharacters"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

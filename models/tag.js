@@ -23,8 +23,8 @@ class Tag {
         // console.log("goalTagQuery", goalTagQuery)
         const tagResults = await db.query(`INSERT INTO goal_tags (goal_id, tag_id) 
             VALUES ${goalTagQuery}
-            ON CONFLICT DO NOTHING`,tagIds)
-        console.log("tagResults",tagResults)
+            ON CONFLICT DO NOTHING
+            RETURNING * `,tagIds)
         return tagResults
     }
 
@@ -32,7 +32,7 @@ class Tag {
     static async updateGoalTags(tagArr, goalId){
         const deleteRes = await db.query(`DELETE FROM goal_tags WHERE goal_id = $1 RETURNING tag_id`,[goalId])
         console.log("DELETED TAGS", deleteRes)
-        const addRes = this.addTagsToGoal(tagArr,goalId);
+        const addRes = await this.addTagsToGoal(tagArr,goalId);
         console.log("ADDED TAGS", addRes)
         return addRes;
     }

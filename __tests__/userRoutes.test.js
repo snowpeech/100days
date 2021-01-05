@@ -100,7 +100,7 @@ describe('test POST /users', () =>{
           
         expect(response.statusCode).toBe(201);
         expect(response.body).toEqual(
-        expect.objectContaining({ _token: expect.any(String) })
+            expect.objectContaining({ _token: expect.any(String) })
         );
         expect(response.body.message).toEqual("User created")
     })  
@@ -159,7 +159,7 @@ describe('test PATCH /users/:id', () =>{
             first_name:"new",
             last_name:"name",
             _token: testUserToken 
-            }); //should add a .send({_token: testUserToken})
+            }); 
       
         expect(response.statusCode).toBe(200);
         expect(response.body.user.id).toBe(userId);
