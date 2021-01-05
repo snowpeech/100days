@@ -131,3 +131,8 @@ INSERT INTO tendays (goal_id,day,progress, win1, win2, win3, win_plan1, bad1, ba
 
 -- INSERT INTO pm (goal_id, day, gratitude, obstacle1, solution1, discipline, overall_day, progress,reflect)
 --     VALUES (5,11,'sunshine day','cat','get stuff done first', 3,7,true,'I think it was a good day, got fun things to do that were not goal related');
+
+
+-- sql text 
+-- pm.day AS pm_day, pm.gratitude_pm, pm.obstacle1 , pm.obstacle2 , pm.obstacle3 , pm.solution1 , pm.solution2 , pm.solution3 , pm.discipline , pm.overall_day , pm.user_def1 ,    pm.user_def2 ,    pm.user_def3 ,    pm.reflect,
+-- t.day, t.accomplished, t.win1, t.win2, t.win3, t.win_plan1, t.win_plan2, t.win_plan3, t.bad1, t.bad2, t.bad3, t.solution1, t.solution2, t.solution3, t.microgoal

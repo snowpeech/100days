@@ -29,7 +29,7 @@ beforeEach(async () => {
           (email, password, first_name, last_name)
           VALUES
           ('user@g.com', '${hashedPassword}', 'Kona', 'K'),
-          ('user2@g.com', '${hashedPassword}', 'Hope', 'Lee')
+          ('user2@g.com', '${hashedPassword}', 'Sushi', 'Roll')
           RETURNING id, email`
     );
     userId = results.rows[0].id;
@@ -233,6 +233,4 @@ describe('test DELETE /goals', () =>{
         .send({_token:testUserToken});
         expect(getGoal.body.goals.length).toBe(2);
     })
-    
-
 })
