@@ -60,7 +60,6 @@ class Goal {
             LEFT JOIN goal_tags AS gt ON g.goal_id = gt.goal_id
             LEFT JOIN tags AS t ON gt.tag_id = t.tag_id
             WHERE g.goal_id = $1`,[goalId])
-        // const results = await db.query(`SELECT * FROM goals WHERE goal_id = $1`,[goalId])
         
         if(!results.rows){
             throw new ExpressError(`Goal ${goalId} not found`, 404)
@@ -102,7 +101,7 @@ class Goal {
             "goal_id",
             goalId
             );
-            console.log("Q & V :::", queryStr, values)
+
         const results = await db.query(`${queryStr} RETURNING *`, values);  
                  
         if(!results.rows[0]){
@@ -115,19 +114,3 @@ class Goal {
 }
 
 module.exports = Goal;
-
-// INSERT INTO goals
-//             (user_id, goal, start_day)
-//             VALUES ($1, $2, $3)
-
-            
-// INSERT INTO goals
-// (user_id, goal, start_day)
-// VALUES (24, 'test');
-
-// INSERT INTO tags (tag) VALUES ('happiness'), ('health'), ('relationships');
-
-// INSERT INTO goal_tags values (1, 1);
-
-//need to check if tag exists in table, if not create it
-//add into goals_tags table, the proper link

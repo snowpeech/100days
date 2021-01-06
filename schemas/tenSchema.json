@@ -1,0 +1,208 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "accomplished": true,
+            "win1": "some text",
+            "win2": "some text",
+            "win3": "some text",
+            "win_plan1": "some text",
+            "win_plan2": "some text",
+            "win_plan3": "some text",
+            "bad1": "some text",
+            "bad2": "some text",
+            "bad3": "some text",
+            "solution1": "some text",
+            "solution2": "some text",
+            "solution3": "some text",
+            "microgoal": "some text",
+            "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiam9qbyIsImlzX2FkbWluIjp0cnVlfSwiaWF0IjoxNjAxNzcxNzUyfQ.dkzAw8JFzvlrmYptXk9id4dwam66s_-MaNm8Wyg5_m0"
+        }
+    ],
+    "required": [
+        "accomplished",
+        "win1",
+        "win_plan1",
+        "bad1",
+        "solution1",
+        "microgoal"
+    ],
+    "properties": {
+        "goal_id": {
+            "$id": "#/properties/goal_id",
+            "type": "integer",
+            "title": "The goal_id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                5
+            ]
+        },
+        "day": {
+            "$id": "#/properties/day",
+            "type": "integer",
+            "title": "The day schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                33
+            ]
+        },
+        "accomplished": {
+            "$id": "#/properties/accomplished",
+            "type": "boolean",
+            "title": "The accomplished schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": false,
+            "examples": [
+                true
+            ]
+        },
+        "win1": {
+            "$id": "#/properties/win1",
+            "type": "string",
+            "title": "The win1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "win2": {
+            "$id": "#/properties/win2",
+            "type": "string",
+            "title": "The win2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "win3": {
+            "$id": "#/properties/win3",
+            "type": "string",
+            "title": "The win3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "win_plan1": {
+            "$id": "#/properties/win_plan1",
+            "type": "string",
+            "title": "The win_plan1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "win_plan2": {
+            "$id": "#/properties/win_plan2",
+            "type": "string",
+            "title": "The win_plan2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "win_plan3": {
+            "$id": "#/properties/win_plan3",
+            "type": "string",
+            "title": "The win_plan3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "bad1": {
+            "$id": "#/properties/bad1",
+            "type": "string",
+            "title": "The bad1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "bad2": {
+            "$id": "#/properties/bad2",
+            "type": "string",
+            "title": "The bad2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "bad3": {
+            "$id": "#/properties/bad3",
+            "type": "string",
+            "title": "The bad3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "solution1": {
+            "$id": "#/properties/solution1",
+            "type": "string",
+            "title": "The solution1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "solution2": {
+            "$id": "#/properties/solution2",
+            "type": "string",
+            "title": "The solution2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "solution3": {
+            "$id": "#/properties/solution3",
+            "type": "string",
+            "title": "The solution3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "microgoal": {
+            "$id": "#/properties/microgoal",
+            "type": "string",
+            "title": "The microgoal schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "some text"
+            ]
+        },
+        "_token": {
+            "$id": "#/properties/_token",
+            "type": "string",
+            "title": "The _token schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiam9qbyIsImlzX2FkbWluIjp0cnVlfSwiaWF0IjoxNjAxNzcxNzUyfQ.dkzAw8JFzvlrmYptXk9id4dwam66s_-MaNm8Wyg5_m0"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

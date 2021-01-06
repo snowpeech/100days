@@ -1,12 +1,43 @@
 const express = require('express');
-const db = require('../db');
+const jsonschema =require('jsonschema');
 const ExpressError = require('../helpers/expressError');
 const router = new express.Router();
 const { ensureUserGoal } = require('../middleware/auth');
 const { getOneDay } = require('../models/post');
 const Post = require('../models/post')
+const amSchema = require('../schemas/amSchema.json');
+const amUpdateSchema = require('../schemas/amUpdateSchema.json');
+const pmSchema = require('../schemas/pmSchema.json');
+const pmUpdateSchema = require('../schemas/pmUpdateSchema.json');
+const tenSchema = require('../schemas/tenSchema.json');
+const tenUpdateSchema = require('../schemas/tenUpdateSchema.json');
 
-const sqlForPost = require('../helpers/sqlForPost')
+
+/* GET PM metrics for 10day */ 
+router.get('/:goalid/:day/metrics',ensureUserGoal, async (req, res,next) => {
+    try {
+        const result = await Post.getMetrics(req.params.goalid, req.params.day)
+        
+        return res.json({metrics:result})
+    } catch(e) {
+        return next(e)
+    }
+})
+
+/* GET a goal's day's post: "am", "pm", "tendays" */
+router.get('/:goalid/:day/:posttype',ensureUserGoal, async (req, res,next) => {
+    try {
+        const result = await Post.getPostOfDay(req.params.posttype,req.params.goalid, req.params.day);
+        if(req.params.posttype == 'tendays'){
+            const metrics = await Post.getMetrics(req.params.goalid, req.params.day)
+            result.metrics = metrics
+        }
+
+        return res.json({post:result})
+    } catch(e) {
+        return next(e)
+    }
+})
 
 /* GET a goal's day's am and pm posts */
 router.get('/:goalid/:day',ensureUserGoal, async (req, res,next) => {
@@ -28,40 +59,33 @@ router.get('/:goalid', ensureUserGoal, async (req, res,next) => {
     }
 })
 
-/* GET PM metrics for 10day */ 
-router.get('/:goalid/:day/metrics',ensureUserGoal, async (req, res,next) => {
-    try {
-        const result = await Post.getMetrics(req.params.goalid, req.params.day)
-        
-        return res.json({metrics:result})
-    } catch(e) {
-        return next(e)
-    }
-})
-
-/* GET a goal's day's post: "am", "pm", "tendays" */
-router.get('/:goalid/:day/:posttype',ensureUserGoal, async (req, res,next) => {
-    try {
-
-        const result = await Post.getPostOfDay(req.params.posttype,req.params.goalid, req.params.day);
-        if(req.params.posttype == 'tendays'){
-            const metrics = await Post.getMetrics(req.params.goalid, req.params.day)
-            console.log("metrics!!!!!", metrics)
-            result.metrics = metrics
-        }
-
-        return res.json({post:result})
-    } catch(e) {
-        return next(e)
-    }
-})
-
 /* GET user's latest posts??  */
 
 /* POST a goal's day's post */
 router.post('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
     try {
         const {goalid, day, posttype} = req.params
+        
+        let result;
+        switch(posttype){
+            case 'am':
+                result = jsonschema.validate(req.body,amSchema);
+                break;
+            case 'pm':
+                result = jsonschema.validate(req.body,pmSchema);
+                break;
+            case 'tendays':
+                result = jsonschema.validate(req.body,tenSchema);
+                break;
+            default:
+                break;
+        }
+        if(!result.valid){
+            let listOfErrors = result.errors.map(error => error.stack);
+            let error = new ExpressError(listOfErrors, 400);
+            return next(error);
+        }
+
         const response = await Post.newPost(posttype, req.body,goalid,day)
         if(!response){throw new ExpressError("Error processing", 404)}
         return res.json({message:"success"})
@@ -71,10 +95,30 @@ router.post('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
 })
 
 /* update a goal's day's am post */
-router.post('/:goalid/:day/:posttype/update', ensureUserGoal, async (req,res,next) => {
+router.patch('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
     try {
-        const {goalid, day,posttype} = req.params
-        
+        const {goalid, day,posttype} = req.params;
+        let result;
+        switch(posttype){
+            case 'am':
+                result = jsonschema.validate(req.body,amUpdateSchema);
+                break;
+            case 'pm':
+                result = jsonschema.validate(req.body,pmUpdateSchema);
+                break;
+            case 'tendays':
+                result = jsonschema.validate(req.body,tenUpdateSchema);
+                break;
+            default:
+                break;
+        }
+        if(!result.valid){
+            let listOfErrors = result.errors.map(error => error.stack);
+            let error = new ExpressError(listOfErrors, 400);
+            return next(error);
+        }
+
+
         const response = await Post.updatePost(posttype,req.body,goalid,day)
         if(!response){throw new ExpressError("Error processing", 404)}
         return res.json({message:"success"})
@@ -84,7 +128,7 @@ router.post('/:goalid/:day/:posttype/update', ensureUserGoal, async (req,res,nex
 })
 
 /* delete a goal's day's post */
-router.delete('/:goalid/:day/:posttype/delete', ensureUserGoal, async (req,res,next) => {
+router.delete('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
     try {
         const {goalid, day,posttype} = req.params
 

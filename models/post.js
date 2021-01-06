@@ -1,29 +1,19 @@
+const { request } = require('express')
 const db = require('../db')
-// const {BCRYPT_WORK_FACTOR, SECRET} = require('../config')
 const ExpressError = require('../helpers/expressError')
-const sqlForPartialUpdate = require("../helpers/sqlForPartialUpdate")
 const sqlForPost = require('../helpers/sqlForPost')
+const sqlForPostUpdate = require('../helpers/sqlForPostUpdate')
 
 class Post {
-    // static async newPost(table, postObj){
-    //     const {queryStr, values} = sqlForPost(postObj,table);
-    //     console.log("Q & V",queryStr,values)
-    //     let result = await db.query(`${queryStr} RETURNING *`, values)
-    //     console.log(result.rows)
-    //     if(!result.rows[0]){
-    //         throw new ExpressError("Error posting",404)
-    //     }  
-    //     return result.rows      
-    // }
+
     static async newPost(table, postObj, goalId,day){
         //push goalId and day into postObj
-        console.log("table",table,postObj, goalId,day)
         postObj["day"] =day;
         postObj["goal_id"]=goalId;
         const {queryStr, values} = sqlForPost(postObj,table);
-        console.log("Q & V",queryStr,values)
+        
         let result = await db.query(`${queryStr} RETURNING *`, values)
-        console.log(result.rows)
+        
         if(!result.rows[0]){
             throw new ExpressError("Error posting",404)
         }  
@@ -64,7 +54,7 @@ class Post {
             `,[(day-10), day, goalId])
 
             if(!result.rows[0]){
-                throw new ExpressError("No data for day range",404)
+                result.rows = "No metrics for day range"
             }
 
         return result.rows
@@ -110,10 +100,10 @@ class Post {
     }
 
     static async updatePost(table, postObj, goalId, day){
-        const {queryStr, values} = sqlForPartialUpdate(table,postObj,goalId,day);
-        console.log("Q & V",queryStr,values)
+        const {queryStr, values} = sqlForPostUpdate(table,postObj,goalId,day);
+        
         let result = await db.query(`${queryStr} RETURNING *`, values)
-        console.log(result.rows)
+        
         if(!result.rows[0]){
             throw new ExpressError("Goal / day post does not exist",404)
         }  
@@ -133,15 +123,3 @@ class Post {
 }
 
 module.exports = Post;
-
-
-// SELECT  am.day AS am_day, am.gratitude_am, am.big_goal, am.task1, am.task2,am.task3 , 
-// pm.day AS pm_day, pm.gratitude_pm, pm.obstacle1 , pm.obstacle2 , pm.obstacle3 , pm.solution1 , pm.solution2 , pm.solution3 , pm.discipline , pm.overall_day , pm.user_def1 ,    pm.user_def2 ,    pm.user_def3 ,    pm.reflect,
-// t.day AS ten_day, t.accomplished, t.win1, t.win2, t.win3, t.win_plan1, t.win_plan2, t.win_plan3, t.bad1, t.bad2, t.bad3, t.solution1, t.solution2, t.solution3, t.microgoal
-// FROM am 
-// FULL OUTER JOIN pm ON am.day = pm.day 
-//     AND am.goal_id = pm.goal_id
-// FULL OUTER JOIN tendays AS t ON pm.day = t.day 
-//     AND pm.goal_id = t.goal_id
-// WHERE am.goal_id = 10 OR pm.goal_id = 10  OR t.goal_id = 10 
-// ORDER BY am_day, pm_day, ten_day

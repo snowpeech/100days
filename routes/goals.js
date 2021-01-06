@@ -77,7 +77,7 @@ router.patch('/:goalid', ensureUserGoal, async(req,res,next) => {
 router.delete('/:goalid', ensureUserGoal, async(req,res,next)=>{
     try{
         let token = await Goal.delete(req.params.goalid);
-        console.log("DELETED GOAL TON", token)
+        
         
         // return res.status(204).json({message: "Goal deleted", _token:token});
         //json isn't returned if status is defined :( 

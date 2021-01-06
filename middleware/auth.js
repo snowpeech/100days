@@ -42,17 +42,17 @@ function ensureCorrectUser(req,res,next){
 
 function ensureUserGoal(req,res,next){    
     try{
-        if(!req.user){
+        if(!req.user || !req.user.goals){
             const err = new ExpressError("Unauthorized user", 401);
             return next(err);
-        }
-
-        if(req.user.goals.includes(+req.params.goalid) ){
-            return next();
         } else {
-            const err = new ExpressError("Unauthorized user", 401);
-            return next(err)
-        }
+            if(req.user.goals.includes(+req.params.goalid) ){
+                return next();
+            } else {
+                const err = new ExpressError("Unauthorized user", 401);
+                return next(err)
+            }
+    }
     } catch (err) {
         return next(err)
     }

@@ -10,7 +10,7 @@ class User {
     static async register({email, password, first_name, last_name, location, gender, phone_num}) {
         
         let hashedPassword = await  bcrypt.hash(password,BCRYPT_WORK_FACTOR);
-        //need to check if email already exists. if so return error this logic doesn't belong here
+        
         const results = await db.query(`
             INSERT INTO users 
             (email, password, first_name, last_name, location, gender, phone_num) 
@@ -33,16 +33,16 @@ class User {
             INNER JOIN goals AS g
             ON u.id = g.user_id
             WHERE u.email = $1;`,[email])
-        console.log(result.rows[0], "DB RESULT")
+
         let {id, password} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
         let user = {id, email, goals}
-        console.log("LOGIN USER",user)
+
         if (user && (await bcrypt.compare(passwordIn, password))) {
             
-            let token = jwt.sign(user, SECRET); 
-            
+            let token = jwt.sign(user, SECRET);             
             return token;
+
         } else {
             throw new ExpressError("Wrong password/username", 400);
         }
@@ -55,7 +55,7 @@ class User {
         return results.rows;
     }
 
-    /* get a user */
+    /* get a user by user Id*/
     static async getOne(userId){
         const results = await db.query(`SELECT id, email, first_name, last_name, location, gender, phone_num, want_buddy, has_buddy,buddy_email 
         FROM users
@@ -65,6 +65,15 @@ class User {
         }
         return results.rows;
     }
+
+    /* get a user by email*/
+    static async checkEmail(email){
+        const results = await db.query(`SELECT id, email, first_name, last_name
+        FROM users WHERE email=$1`, [email]);
+
+        return results.rows[0];
+    }
+
 
     /* update a user */
     static async update(userId,updateObj){
@@ -97,9 +106,3 @@ class User {
 }
 
 module.exports= User;
-
-// SELECT u.id, u.email, u.password, g.goal_id
-// FROM users AS u
-// INNER JOIN goals AS g
-// ON u.id = g.user_id
-// WHERE email = 'jojo@gmail.com';

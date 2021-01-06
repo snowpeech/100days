@@ -17,14 +17,15 @@ router.post('/', async (req,res,next) => {
             let error = new ExpressError(listOfErrors, 400);
             return next(error);
         }
-
-        const {email, password, first_name, last_name, location, gender, phone_num} = req.body 
-        const userObj = {email, password, first_name, last_name, location, gender, phone_num};
+        const emailExists = await User.checkEmail(req.body.email);
         
-        let token = await User.register(userObj);
-        
-        // return res.status(201).json({user:newUser});
-        return res.status(201).json({message:"User created", _token:token})
+        if(!emailExists){
+            let token = await User.register(req.body);
+            
+            return res.status(201).json({message:"User created", _token:token})
+        } else {
+            throw new ExpressError("Email is already registered", 404)
+        }
 
     } catch(e) {
         return next(e)

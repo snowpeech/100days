@@ -1,0 +1,181 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "gratitude_pm": "text",
+            "obstacle1": "text",
+            "obstacle2": "text",
+            "obstacle3": "text",
+            "solution1": "text",
+            "solution2": "text",
+            "solution3": "text",
+            "discipline": 5,
+            "overall_day": 5,
+            "user_def1": 8,
+            "user_def2": 4,
+            "user_def3": 6,
+            "reflect": "text",
+            "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiam9qbyIsImlzX2FkbWluIjp0cnVlfSwiaWF0IjoxNjAxNzcxNzUyfQ.dkzAw8JFzvlrmYptXk9id4dwam66s_-MaNm8Wyg5_m0"
+        }
+    ],
+    "required": [
+        "gratitude_pm",
+        "obstacle1",
+        "solution1",
+        "discipline",
+        "overall_day",
+        "reflect"
+    ],
+    "properties": {
+        "gratitude_pm": {
+            "$id": "#/properties/gratitude_pm",
+            "type": "string",
+            "title": "The gratitude_pm schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "obstacle1": {
+            "$id": "#/properties/obstacle1",
+            "type": "string",
+            "title": "The obstacle1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "obstacle2": {
+            "$id": "#/properties/obstacle2",
+            "type": "string",
+            "title": "The obstacle2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "obstacle3": {
+            "$id": "#/properties/obstacle3",
+            "type": "string",
+            "title": "The obstacle3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "solution1": {
+            "$id": "#/properties/solution1",
+            "type": "string",
+            "title": "The solution1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "solution2": {
+            "$id": "#/properties/solution2",
+            "type": "string",
+            "title": "The solution2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "solution3": {
+            "$id": "#/properties/solution3",
+            "type": "string",
+            "title": "The solution3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "discipline": {
+            "$id": "#/properties/discipline",
+            "type": "integer",
+            "title": "The discipline schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 10,
+            "examples": [
+                5
+            ]
+        },
+        "overall_day": {
+            "$id": "#/properties/overall_day",
+            "type": "integer",
+            "title": "The overall_day schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 10,
+            "examples": [
+                5
+            ]
+        },
+        "user_def1": {
+            "$id": "#/properties/user_def1",
+            "type": "integer",
+            "title": "The user_def1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                8
+            ]
+        },
+        "user_def2": {
+            "$id": "#/properties/user_def2",
+            "type": "integer",
+            "title": "The user_def2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                4
+            ]
+        },
+        "user_def3": {
+            "$id": "#/properties/user_def3",
+            "type": "integer",
+            "title": "The user_def3 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                6
+            ]
+        },
+        "reflect": {
+            "$id": "#/properties/reflect",
+            "type": "string",
+            "title": "The reflect schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "text"
+            ]
+        },
+        "_token": {
+            "$id": "#/properties/_token",
+            "type": "string",
+            "title": "The _token schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiam9qbyIsImlzX2FkbWluIjp0cnVlfSwiaWF0IjoxNjAxNzcxNzUyfQ.dkzAw8JFzvlrmYptXk9id4dwam66s_-MaNm8Wyg5_m0"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

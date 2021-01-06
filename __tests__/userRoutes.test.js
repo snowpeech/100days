@@ -87,7 +87,7 @@ describe('test GET /users', () =>{
 })
 
 describe('test POST /users', () =>{
-    test("Able to create new user and return a token", async () => {
+    test("Able to register / create new user and return a token", async () => {
         const response = await request(app)
            .post(`/users`)
            .send({
@@ -145,8 +145,8 @@ describe('test POST /users', () =>{
          "phone_num":"1234567980"
          }); 
        
-      expect(response.body.error.message).not.toBeUndefined();
-      expect(response.statusCode).toBe(500);
+      expect(response.body.error.message).toBe("Email is already registered");
+      expect(response.statusCode).toBe(404);
     })
   
   })
