@@ -16,10 +16,51 @@ let goalId;
 
 const noTknMsg = "You must be logged in to view this"
 
-// beforeAll(async () => {
-//     await db.query(`INSERT INTO tags 
-//     (tag) VALUES ('health'),('fitness'),('career')`);
-// }) //need to follow with a delete all
+beforeAll(async () => {
+    await db.query(`DROP TABLE IF EXISTS users, goals, am, pm, tendays, tags, goal_tags;`);
+    await db.query(`CREATE TABLE users
+    (
+        id SERIAL PRIMARY KEY,
+        email text UNIQUE NOT NULL,
+        PASSWORD VARCHAR NOT NULL,
+        first_name text NOT NULL,
+        last_name text NOT NULL,
+        location text,
+        gender text,
+        phone_num text,
+    
+        want_buddy BOOLEAN DEFAULT TRUE,
+        has_buddy BOOLEAN DEFAULT FALSE,
+        buddy_email text
+    );
+    
+    CREATE TABLE goals
+    (
+        goal_id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        goal text NOT NULL,
+    
+        start_day DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_def1 text DEFAULT NULL,
+        user_def2 text DEFAULT NULL,
+        user_def3 text DEFAULT NULL
+    );
+    CREATE TABLE tags
+    (
+        tag_id SERIAL PRIMARY KEY,
+        tag text UNIQUE NOT NULL
+    );
+
+    CREATE TABLE goal_tags
+    (
+        goal_id INTEGER NOT NULL REFERENCES goals(goal_id) ON DELETE CASCADE,
+        tag_id INTEGER NOT NULL REFERENCES tags(tag_id) ON DELETE CASCADE,
+        PRIMARY KEY (goal_id, tag_id)
+    );
+    `)
+    await db.query(`INSERT INTO tags 
+    (tag) VALUES ('health'),('fitness'),('career')`);
+}) //need to follow with a delete all
 
 beforeEach(async () => {
     const hashedPassword = await bcrypt.hash("secret123", BCRYPT_WORK_FACTOR);
@@ -54,6 +95,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+
     await db.end();
 });
 

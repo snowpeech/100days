@@ -15,6 +15,26 @@ let userId;
 const loggedInErrMsg = "You must be logged in to view this";
 const incorrectUserMsg = "Unauthorized user";
 
+beforeAll(async () => {
+    await db.query(`DROP TABLE IF EXISTS users, goals, am, pm, tendays, tags, goal_tags;`);
+    await db.query(`CREATE TABLE users
+    (
+        id SERIAL PRIMARY KEY,
+        email text UNIQUE NOT NULL,
+        PASSWORD VARCHAR NOT NULL,
+        first_name text NOT NULL,
+        last_name text NOT NULL,
+        location text,
+        gender text,
+        phone_num text,
+    
+        want_buddy BOOLEAN DEFAULT TRUE,
+        has_buddy BOOLEAN DEFAULT FALSE,
+        buddy_email text
+    );
+    `)
+}) //need to follow with a delete all
+
 beforeEach(async () => {
     const hashedPassword = await bcrypt.hash("secret123", BCRYPT_WORK_FACTOR);
   
