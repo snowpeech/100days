@@ -33,11 +33,12 @@ class User {
             FULL JOIN goals AS g
             ON u.id = g.user_id
             WHERE u.email = $1;`,[email])
-        console.log("USER MODEL,", result)
+        console.log("USER MODEL,", result.rows[0])
         let {id, password} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
         let start_days = result.rows.map(r => r.start_day);
         let user = {id, email, goals, start_days}
+        console.log("USER MODEL USER", user)
 
         if (user && (await bcrypt.compare(passwordIn, password))) {
             

@@ -30,15 +30,17 @@ class Goal {
         const result = await db.query(`
             SELECT u.id, u.email, g.goal_id
             FROM users AS u
-            INNER JOIN goals AS g
+            FULL JOIN goals AS g
             ON u.id = g.user_id
             WHERE u.id = $1;`,[userId])
             
         let {id, email} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
-        let user = {id, email, goals}
+        let start_days = result.rows.map(r => r.start_day);
+        let user = {id, email, goals, start_days}
         
         let token = jwt.sign(user, SECRET); 
+        console.log("UPDATED TOKEN FROM GOAL MODEL", token)
         return token;
     }
 
