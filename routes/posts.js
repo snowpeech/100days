@@ -42,7 +42,12 @@ router.get('/:goalid/:day/:posttype',ensureUserGoal, async (req, res,next) => {
 /* GET a goal's day's am and pm posts */
 router.get('/:goalid/:day',ensureUserGoal, async (req, res,next) => {
     try {
-        let post = await getOneDay(req.params.goalid, req.params.day)
+        const {day, goalid} = req.params;
+        let post = await getOneDay(goalid, day)
+        
+        post.goal_id = goalid;
+        post.day = day;
+        
         return res.json({post})
     } catch(e) {
         return next(e)

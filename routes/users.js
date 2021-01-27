@@ -41,6 +41,7 @@ router.post('/login', async (req,res,next) => {
             //easier than using another schema
             throw new ExpressError("Email and password required", 404)
         }
+        console.log("ROUTER POST LOGIN", email, password)
         let token = await User.login(email, password);
         
         return res.json({message:"Logged in", _token:token})

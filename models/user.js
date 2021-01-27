@@ -10,7 +10,7 @@ class User {
     static async register({email, password, first_name, last_name, location, gender, phone_num}) {
         
         let hashedPassword = await  bcrypt.hash(password,BCRYPT_WORK_FACTOR);
-        
+        email = email.toLowerCase();
         const results = await db.query(`
             INSERT INTO users 
             (email, password, first_name, last_name, location, gender, phone_num) 
@@ -26,17 +26,18 @@ class User {
 
     /*Log in user, returns token */
     static async login(email,passwordIn){
-        
+        email = email.toLowerCase();
         const result = await db.query(`
-            SELECT u.id, u.email, u.password, g.goal_id
+            SELECT u.id, u.email, u.password, g.goal_id, g.start_day
             FROM users AS u
-            INNER JOIN goals AS g
+            FULL JOIN goals AS g
             ON u.id = g.user_id
             WHERE u.email = $1;`,[email])
-
+        console.log("USER MODEL,", result)
         let {id, password} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
-        let user = {id, email, goals}
+        let start_days = result.rows.map(r => r.start_day);
+        let user = {id, email, goals, start_days}
 
         if (user && (await bcrypt.compare(passwordIn, password))) {
             
@@ -77,6 +78,7 @@ class User {
 
     /* update a user */
     static async update(userId,updateObj){
+        console.log("USER UPDATE userId, obj", userId, updateObj)
         let { queryStr, values } = sqlForPartialUpdate(
             "users",
             updateObj,

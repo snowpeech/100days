@@ -5,7 +5,7 @@ const ExpressError = require('../helpers/expressError');
 /* check token and add payload to user */
 function authenticateJWT(req, res, next) {
     try {
-      const tokenFromBody = req.body._token;
+      const tokenFromBody = req.body._token || req.query._token;
       const payload = jwt.verify(tokenFromBody, SECRET);
       req.user = payload;
       

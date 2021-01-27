@@ -74,7 +74,8 @@ class Post {
     }
 
     static async getOneDay(goalId, day){
-        let tenResult;
+        let tenResult; 
+        // const post = {"ten":""};
         let result = await db.query(`
         SELECT *  from am 
         FULL OUTER JOIN pm ON am.day = pm.day AND am.goal_id = pm.goal_id
@@ -82,17 +83,21 @@ class Post {
         AND (am.day = $2 OR pm.day =$2 )
         `,[goalId,day]);
 
-        let post ={day:result.rows}
-
+        let post =result.rows[0] ? result.rows[0] : {};
+        
         if(day%10 === 0){
             tenResult = await db.query(`
             SELECT * FROM tendays 
             WHERE goal_id = $1 AND day = $2
             `, [goalId,day]);
-            post.ten = tenResult.rows
+            
+            if(tenResult.rows.length > 0){
+                post["ten"] = tenResult.rows[0]
+            }
+            
         }
 
-        if(!result.rows[0] && !tenResult.rows[0]){
+        if(!result.rows && !tenResult.rows){
             throw new ExpressError("No posts found for day and goal", 404)
         }
 
