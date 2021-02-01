@@ -54,7 +54,7 @@
         },
         "obstacle2": {
             "$id": "#/properties/obstacle2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The obstacle2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -64,7 +64,7 @@
         },
         "obstacle3": {
             "$id": "#/properties/obstacle3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The obstacle3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -84,7 +84,7 @@
         },
         "solution2": {
             "$id": "#/properties/solution2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The solution2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -94,7 +94,7 @@
         },
         "solution3": {
             "$id": "#/properties/solution3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The solution3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -128,7 +128,7 @@
         },
         "user_def1": {
             "$id": "#/properties/user_def1",
-            "type": "integer",
+            "type": ["integer", "null"],
             "title": "The user_def1 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,
@@ -138,7 +138,7 @@
         },
         "user_def2": {
             "$id": "#/properties/user_def2",
-            "type": "integer",
+            "type": ["integer", "null"],
             "title": "The user_def2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,
@@ -148,7 +148,7 @@
         },
         "user_def3": {
             "$id": "#/properties/user_def3",
-            "type": "integer",
+            "type": ["integer", "null"],
             "title": "The user_def3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,

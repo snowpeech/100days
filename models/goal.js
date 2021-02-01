@@ -28,7 +28,7 @@ class Goal {
 
     static async updateTokenGoals(userId){
         const result = await db.query(`
-            SELECT u.id, u.email, g.goal_id
+            SELECT u.id, u.email, g.goal_id, g.start_day
             FROM users AS u
             FULL JOIN goals AS g
             ON u.id = g.user_id
@@ -36,8 +36,10 @@ class Goal {
             
         let {id, email} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
+        console.log(result.rows)
         let start_days = result.rows.map(r => r.start_day);
         let user = {id, email, goals, start_days}
+        console.log("UPDATED USERToken FROM GOAL MODEL", user)
         
         let token = jwt.sign(user, SECRET); 
         console.log("UPDATED TOKEN FROM GOAL MODEL", token)

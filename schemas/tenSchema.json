@@ -75,7 +75,7 @@
         },
         "win2": {
             "$id": "#/properties/win2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The win2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -85,7 +85,7 @@
         },
         "win3": {
             "$id": "#/properties/win3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The win3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -105,7 +105,7 @@
         },
         "win_plan2": {
             "$id": "#/properties/win_plan2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The win_plan2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -115,7 +115,7 @@
         },
         "win_plan3": {
             "$id": "#/properties/win_plan3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The win_plan3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -135,7 +135,7 @@
         },
         "bad2": {
             "$id": "#/properties/bad2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The bad2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -145,7 +145,7 @@
         },
         "bad3": {
             "$id": "#/properties/bad3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The bad3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -165,7 +165,7 @@
         },
         "solution2": {
             "$id": "#/properties/solution2",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The solution2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
@@ -175,7 +175,7 @@
         },
         "solution3": {
             "$id": "#/properties/solution3",
-            "type": "string",
+            "type": ["string","null"],
             "title": "The solution3 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
