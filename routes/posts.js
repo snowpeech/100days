@@ -39,16 +39,15 @@ router.get('/:goalid/:day/:posttype',ensureUserGoal, async (req, res,next) => {
     }
 })
 
-/* GET a goal's day's am and pm posts */
+/* GET a goal's day's am, pm, (& tenday - if applicable) posts */
 router.get('/:goalid/:day',ensureUserGoal, async (req, res,next) => {
     try {
         const {day, goalid} = req.params;
         let post = await getOneDay(goalid, day)
-        
         post.goal_id = goalid;
         post.day = day;
         
-        return res.json({post})
+        return res.json(post)
     } catch(e) {
         return next(e)
     }
@@ -99,7 +98,7 @@ router.post('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
     }
 })
 
-/* update a goal's day's am post */
+/* update a goal's day's specific post  */
 router.patch('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
     try {
         const {goalid, day,posttype} = req.params;
