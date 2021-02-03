@@ -60,10 +60,24 @@ class Post {
         return result.rows
     }
     /* get all of a goals' am/pm posts */
-    static async getGoals(goalId){
+    static async getGoalsPosts(goalId){
         const amResult = await db.query(`SELECT * FROM am WHERE goal_id =$1 ORDER BY day`, [goalId]);
         const pmResult = await db.query(`SELECT * FROM pm WHERE goal_id =$1 ORDER BY day`, [goalId]);
         const tenResult = await db.query(`SELECT * FROM tendays WHERE goal_id =$1 ORDER BY day`, [goalId]);
+        
+        const posts={am:amResult.rows, pm:pmResult.rows, tendays:tenResult.rows}
+
+        if(!amResult.rows[0] && !pmResult.rows[0] && !tenResult.rows[0]){
+            throw new ExpressError("Goal has no posts",404)
+        }
+        return posts
+    }
+
+    /* get a goals' recent posts */
+    static async getGoalsRecent(goalId, limit =4){
+        const amResult = await db.query(`SELECT * FROM am WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
+        const pmResult = await db.query(`SELECT * FROM pm WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
+        const tenResult = await db.query(`SELECT * FROM tendays WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
         
         const posts={am:amResult.rows, pm:pmResult.rows, tendays:tenResult.rows}
 
@@ -87,7 +101,9 @@ class Post {
         
         if(day%10 === 0){
             tenResult = await db.query(`
-            SELECT * FROM tendays 
+            SELECT accomplished, win1, win2, win3, win_plan1, win_plan2, win_plan3, 
+            bad1, bad2, bad3, solution1, solution2, solution3, microgoal
+             FROM tendays 
             WHERE goal_id = $1 AND day = $2
             `, [goalId,day]);
             
@@ -128,3 +144,15 @@ class Post {
 }
 
 module.exports = Post;
+
+// SELECT am.day, pm.day, tendays.day, am.gratitude_am, pm.gratitude_pm, tendays.win1  from am 
+//         FULL OUTER JOIN pm ON am.day = pm.day AND am.goal_id = pm.goal_id
+//         FULL OUTER JOIN tendays ON pm.day = tendays.day AND pm.goal_id = tendays.goal_id
+//         WHERE (am.goal_id = 50 OR pm.goal_id = 50 OR tendays.goal_id =50)
+//         ORDER BY am.day desc, pm.day desc, tendays.day desc;
+
+// const result = await db.query(`SELECT am.day, pm.day, tendays.day, am.gratitude_am, pm.gratitude_pm, tendays.win1  from am 
+// FULL OUTER JOIN pm ON am.day = pm.day AND am.goal_id = pm.goal_id
+// FULL OUTER JOIN tendays ON pm.day = tendays.day AND pm.goal_id = tendays.goal_id
+// WHERE (am.goal_id = $1 OR pm.goal_id = $1 OR tendays.goal_id =$1)
+// ORDER BY am.day desc, pm.day desc, tendays.day desc LIMIT $2`,[goalId, limit]

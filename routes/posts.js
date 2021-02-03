@@ -13,6 +13,16 @@ const tenSchema = require('../schemas/tenSchema.json');
 const tenUpdateSchema = require('../schemas/tenUpdateSchema.json');
 
 
+/* GET user's latest posts */
+router.get('/:goalid/latest', ensureUserGoal, async(req,res,next) => {
+    try{
+        let posts = await Post.getGoalsRecent(req.params.goalid, 3);
+        return res.json({posts})
+    } catch(e) {
+        return next(e)
+    }
+})
+
 /* GET PM metrics for 10day */ 
 router.get('/:goalid/:day/metrics',ensureUserGoal, async (req, res,next) => {
     try {
@@ -56,14 +66,12 @@ router.get('/:goalid/:day',ensureUserGoal, async (req, res,next) => {
 /* GET all of goal's posts - {posts: am:[], pm:[], tendays:[]} */
 router.get('/:goalid', ensureUserGoal, async (req, res,next) => {
     try {
-        let posts = await Post.getGoals(req.params.goalid);
+        let posts = await Post.getGoalsPosts(req.params.goalid);
         return res.json({posts})
     } catch(e) {
         return next(e)
     }
 })
-
-/* GET user's latest posts??  */
 
 /* POST a goal's day's post */
 router.post('/:goalid/:day/:posttype', ensureUserGoal, async (req,res,next) => {
