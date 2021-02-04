@@ -75,9 +75,9 @@ class Post {
 
     /* get a goals' recent posts */
     static async getGoalsRecent(goalId, limit =4){
-        const amResult = await db.query(`SELECT * FROM am WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
-        const pmResult = await db.query(`SELECT * FROM pm WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
-        const tenResult = await db.query(`SELECT * FROM tendays WHERE goal_id =$1 ORDER BY day LIMIT $2`, [goalId, limit]);
+        const amResult = await db.query(`SELECT * FROM am WHERE goal_id =$1 ORDER BY day DESC LIMIT $2`, [goalId, limit]);
+        const pmResult = await db.query(`SELECT * FROM pm WHERE goal_id =$1 ORDER BY day DESC LIMIT $2`, [goalId, limit]);
+        const tenResult = await db.query(`SELECT * FROM tendays WHERE goal_id =$1 ORDER BY day DESC LIMIT $2`, [goalId, limit]);
         
         const posts={am:amResult.rows, pm:pmResult.rows, tendays:tenResult.rows}
 
