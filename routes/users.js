@@ -24,7 +24,7 @@ router.post('/', async (req,res,next) => {
             
             return res.status(201).json({message:"User created", _token:token})
         } else {
-            throw new ExpressError("Email is already registered", 404)
+            throw new ExpressError("Email is already registered", 400)
         }
 
     } catch(e) {

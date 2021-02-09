@@ -38,12 +38,7 @@ router.get('/:goalid/:day/metrics',ensureUserGoal, async (req, res,next) => {
 router.get('/:goalid/:day/:posttype',ensureUserGoal, async (req, res,next) => {
     try {
         const result = await Post.getPostOfDay(req.params.posttype,req.params.goalid, req.params.day);
-        if(req.params.posttype == 'tendays'){
-            const metrics = await Post.getMetrics(req.params.goalid, req.params.day)
-            result.metrics = metrics
-        }
-
-        return res.json({post:result})
+        return res.json(result)
     } catch(e) {
         return next(e)
     }

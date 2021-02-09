@@ -34,6 +34,10 @@ class User {
             ON u.id = g.user_id
             WHERE u.email = $1;`,[email])
         console.log("USER MODEL,", result.rows[0])
+        console.log(result.rows)
+        if(result.rows.length < 1 ){
+            throw new ExpressError("Wrong password/username", 400);
+        }
         let {id, password} = result.rows[0];
         let goals = result.rows.map(r => r.goal_id);
         let start_days = result.rows.map(r => r.start_day);

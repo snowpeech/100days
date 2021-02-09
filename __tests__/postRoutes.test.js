@@ -185,17 +185,19 @@ describe('test GET /posts', () =>{
             .send({_token: testUserToken}); 
         
         expect(dayResponse.statusCode).toBe(200);
-        console.log("POST DAY", dayResponse.body.post.day, dayResponse.body.post.day.length)
-        expect(dayResponse.body.post.day.length).toBe(1);
-        expect(dayResponse.body.post.ten).toBeUndefined();
+        // console.log("POST DAY", dayResponse.body, dayResponse.body.day)
+        expect(dayResponse.body.day.length).toBe(1);
+        expect(dayResponse.body.ten).toBeUndefined();
 
         const tenResponse = await request(app)
             .get(`/posts/${goalId}/10`)
             .send({_token: testUserToken}); 
-            console.log("POST 10DAY", dayResponse.body.post.day, dayResponse.body.post.day.length)
+            // console.log("POST 10DAY", tenResponse.body.day, tenResponse.body)
         expect(tenResponse.statusCode).toBe(200);
-        expect(tenResponse.body.post.day).toBe("10");
-        expect(tenResponse.body.post.ten.day).toBe(10);
+        expect(tenResponse.body.day).toBe("10");
+        expect(tenResponse.body.gratitude_am).toBeNull();
+        expect(tenResponse.body.gratitude_pm).not.toBeNull();
+        expect(tenResponse.body.ten.accomplished).toBe(true);
     })
 
     test("Gets goal post for a given day and type", async ()=>{

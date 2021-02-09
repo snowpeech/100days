@@ -27,9 +27,9 @@ class Post {
             WHERE goal_id = $1 AND day = $2
             `,[goalId, day])
         
-            if(!result.rows[0]){
-                throw new ExpressError("Goal has no posts of desired post-type for date",404)
-            }
+            // if(!result.rows[0]){
+            //     throw new ExpressError("Goal has no posts of desired post-type for date",404)
+            // }
         return result.rows[0]
     }
     
