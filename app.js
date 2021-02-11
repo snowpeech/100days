@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require("cors");
-const morgan = require('morgan');
+// const morgan = require('morgan');
 
 const ExpressError = require("./helpers/expressError");
 const userRoutes = require("./routes/users");
@@ -13,7 +13,7 @@ const {authenticateJWT} = require('./middleware/auth')
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
 /* routes */
