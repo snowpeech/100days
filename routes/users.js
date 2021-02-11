@@ -52,7 +52,7 @@ router.post('/login', async (req,res,next) => {
 })
 
 /* gets all users from database . May eventually remove this method or just make it unavailable*/
-router.get('/', ensureLoggedIn, async (req,res,next) => {
+router.get('/', async (req,res,next) => {
     try{
         const allUsers = await User.getAll()
         
