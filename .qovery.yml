@@ -1,0 +1,15 @@
+---
+application:
+  name: "100days-back"
+  project: "sample-project"
+  organization: "QoveryCommunity"
+databases:
+- type: "POSTGRESQL"
+  name: "hundreddays"
+  version: "12"
+routers:
+- name: "main-100days-back"
+  routes:
+  - application_name: "100days-back"
+    paths:
+    - "/*"
