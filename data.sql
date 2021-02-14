@@ -103,9 +103,9 @@ CREATE TABLE goal_tags
 
 
 -- INSERT INTO users
---     (email, password, first_name, last_name, location, gender, phone_num)
+--     (email, password, first_name, last_name)
 -- VALUES
---     ('g@gmail.com', 'secret123', 'lulu', 'nan', 'austin', 'f', '123-456-0789');
+--     ('g@gmail.com', 'secret123', 'lulu', 'nan');
 
 
 -- INSERT INTO goals
