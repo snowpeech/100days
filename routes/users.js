@@ -54,8 +54,9 @@ router.post('/login', async (req,res,next) => {
 /* gets all users from database . May eventually remove this method or just make it unavailable*/
 router.get('/', async (req,res,next) => {
     try{
+        console.log('trying get all users in routes')
         const allUsers = await User.getAll()
-        
+        console.log('allUsers from routes',allUsers)
         return res.json({users:allUsers})
     } catch(e) {
         return next(e)

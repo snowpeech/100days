@@ -56,8 +56,9 @@ class User {
 
     /* get all users */
     static async getAll(){
+        console.log('user model getAll')
         const results = await db.query(`SELECT id, email, first_name FROM users`)
-        
+        console.log("GETALL results",results)
         return results.rows;
     }
 
