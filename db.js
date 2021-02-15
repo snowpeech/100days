@@ -1,6 +1,6 @@
 "use strict";
 
-const { Client } = require("pg");
+const { Pool } = require("pg");
 const {getDatabaseUri} = require("./config");
 
 // let DB_URI;
@@ -13,7 +13,7 @@ console.log("I'm in db.js");
 //   // DB_URI = "postgresql:///hundreddays";
 // }
 
-const db = new Client({
+const db = new Pool({
   connectionString: getDatabaseUri()
 });
 
