@@ -62,7 +62,7 @@ router.get('/', async (req,res,next) => {
         return next(e)
     }
 })
-
+ 
 /* get a single user by ID */
 router.get('/:id', ensureCorrectUser, async (req,res, next)=> {
     try {
