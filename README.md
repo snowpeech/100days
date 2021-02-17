@@ -1,6 +1,7 @@
 # 100 Days Journal API
 
-Deployed:
+Deployed:[ https://hundred-days-f.herokuapp.com/]  (https://hundred-days-f.herokuapp.com/)
+
 Front End GitHub: [https://github.com/snowpeech/100days-front](https://github.com/snowpeech/100days-front)
 
 ## Description
